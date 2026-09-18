@@ -42,17 +42,18 @@ const Explore = () => {
     : students.filter(s => s.canTeach?.includes(selectedSkill) || s.wantToLearn?.includes(selectedSkill))
 
   if (loading) {
-    return <div className="container-x" style={{ padding: '40px 28px' }}>Loading...</div>
+    return <div className="page-wrapper" style={{ textAlign: 'center' }}>Loading Partners...</div>
   }
 
   return (
-    <div className="container-x" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
-      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '8px' }}>
+    <div className="page-wrapper">
+      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '6px' }}>
         Explore <span className="gradient-text">Partners</span>
       </h1>
-      <p style={{ color: '#94a3b8', marginBottom: '28px' }}>Find students to exchange skills with</p>
+      <p style={{ color: '#94a3b8', fontSize: '1rem' }}>Find students to exchange skills with</p>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '28px' }}>
+      {/* FILTER TAGS */}
+      <div className="tags-row-container">
         {SKILLS.map((skill) => (
           <button
             key={skill}
@@ -65,18 +66,19 @@ const Explore = () => {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+      {/* USER CARDS GRID */}
+      <div className="cards-grid-container">
         {filtered.map((s) => (
           <div key={s._id} className="glass-card card-pad">
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <img
                 src={s.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
                 alt=""
-                style={{ width: 48, height: 48, borderRadius: '50%' }}
+                style={{ width: 44, height: 44, borderRadius: '50%' }}
               />
               <div>
                 <h3 style={{ fontWeight: 700 }}>{s.name}</h3>
-                <p style={{ color: '#64748b', fontSize: 12 }}>{s.branch || 'Student'} • Year {s.year || '1'}</p>
+                <p style={{ color: '#64748b', fontSize: '0.75rem' }}>{s.branch || 'Student'} • Year {s.year || '1'}</p>
               </div>
             </div>
 
