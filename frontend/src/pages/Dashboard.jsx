@@ -44,7 +44,7 @@ const Dashboard = () => {
   const done = swaps.filter(s => s.status === 'completed').length
 
   return (
-    <div className="pt-28 pb-12 px-6 max-w-7xl mx-auto">
+    <div className="pt-32 pb-16 container-x">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-4xl font-black mb-2">
           Welcome, <span className="gradient-text">{user?.name?.split(' ')[0]}</span> 👋

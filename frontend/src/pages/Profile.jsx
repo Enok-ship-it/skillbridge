@@ -79,7 +79,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="pt-28 pb-12 px-6 max-w-4xl mx-auto">
+    <div className="pt-32 pb-16 container-x max-w-4xl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-4xl font-black mb-8">Edit <span className="gradient-text">Profile</span> ✏️</h1>
 

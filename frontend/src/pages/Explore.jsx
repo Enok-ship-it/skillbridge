@@ -52,7 +52,7 @@ const Explore = () => {
   }
 
   return (
-    <div className="pt-28 pb-12 px-6 max-w-7xl mx-auto">
+    <div className="pt-32 pb-16 container-x">
       <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl font-black mb-8">
         Explore <span className="gradient-text">Students</span> 🔍
       </motion.h1>
