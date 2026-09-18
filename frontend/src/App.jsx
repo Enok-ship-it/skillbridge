@@ -13,10 +13,11 @@ import SwapRequests from './pages/SwapRequests'
 
 const PageWrap = ({ children }) => (
   <motion.div
-    initial={{ opacity: 0, y: 16 }}
+    initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.3, ease: "easeOut" }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.25 }}
+    style={{ width: '100%', display: 'block' }}
   >
     {children}
   </motion.div>
@@ -26,12 +27,8 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-5">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-cyan-500/20 rounded-full"></div>
-          <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin absolute inset-0"></div>
-        </div>
-        <p className="text-slate-500 text-sm animate-pulse">Loading SkillBridge...</p>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px' }}>
+        <div className="w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -49,7 +46,9 @@ function App() {
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-1">
+
+        {/* paddingTop = fixed navbar height so content is never hidden */}
+        <main style={{ flex: 1, width: '100%', paddingTop: '80px' }}>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageWrap><Home /></PageWrap>} />
@@ -62,6 +61,7 @@ function App() {
             </Routes>
           </AnimatePresence>
         </main>
+
         <Footer />
       </div>
     </div>

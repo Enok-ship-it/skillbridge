@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
-/* ═══════════════ RESET ═══════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* ═══════════════ RESET & BASE ═══════════════ */
+*, *::before, *::after { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
 
 html {
   scroll-behavior: smooth;
@@ -22,11 +26,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root { width: 100%; min-height: 100vh; }
+#root { 
+  width: 100%; 
+  min-height: 100vh; 
+}
 
-img, svg { max-width: 100%; display: block; }
-a { text-decoration: none; color: inherit; }
-button { font-family: inherit; }
+img, svg { 
+  max-width: 100%; 
+  display: block; 
+}
+
+a { 
+  text-decoration: none; 
+  color: inherit; 
+}
+
+button { 
+  font-family: inherit; 
+}
 
 /* ═══════════════ SCROLLBAR ═══════════════ */
 ::-webkit-scrollbar { width: 10px; }
@@ -37,13 +54,40 @@ button { font-family: inherit; }
 }
 ::selection { background: rgba(34,211,238,0.3); color: #fff; }
 
-/* ═══════════════ LAYOUT — THE CRITICAL FIX ═══════════════ */
+/* ═══════════════ LAYOUT CONTAINERS ═══════════════ */
 .container-x {
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
   padding-left: 28px;
   padding-right: 28px;
+}
+
+/* Universal Page Wrapper for Dashboard, Explore, My Swaps */
+.subpage, .subpage-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-top: 120px !important; /* Pushes content down below fixed Navbar */
+  padding-bottom: 80px;
+  padding-left: 28px;
+  padding-right: 28px;
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+
+.subpage-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.subpage-sub {
+  color: #94a3b8;
+  margin-bottom: 32px;
+  font-size: 1rem;
 }
 
 .section {
@@ -99,7 +143,39 @@ button { font-family: inherit; }
   background: linear-gradient(90deg, transparent, rgba(34,211,238,0.6), rgba(251,191,36,0.5), transparent);
 }
 
-/* ═══════════════ GRIDS — EQUAL HEIGHT CARDS ═══════════════ */
+/* ═══════════════ GRIDS & FLEX LAYOUTS ═══════════════ */
+.stats-row, .stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 32px !important;
+  width: 100%;
+}
+
+.actions-row, .action-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  align-items: center !important;
+  margin-bottom: 40px !important;
+  width: 100%;
+}
+
+.cards-row, .cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 24px !important;
+  width: 100%;
+}
+
+.tags-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  margin-bottom: 32px !important;
+  width: 100%;
+}
+
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -114,11 +190,26 @@ button { font-family: inherit; }
   align-items: stretch;
 }
 
+.block-space {
+  margin-bottom: 24px;
+}
+
 @media (max-width: 900px) {
+  .stats-row, .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .cards-row, .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
 @media (max-width: 640px) {
-  .grid-3, .grid-2 { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .stats-row, .stats-grid, .cards-row, .cards-grid, .grid-3, .grid-2 { 
+    grid-template-columns: minmax(0, 1fr) !important; 
+    gap: 18px !important; 
+  }
+  .subpage, .subpage-container { 
+    padding-top: 100px !important; 
+    padding-left: 18px; 
+    padding-right: 18px; 
+  }
   .container-x { padding-left: 18px; padding-right: 18px; }
   .section { padding-top: 70px; padding-bottom: 70px; }
 }
@@ -161,32 +252,30 @@ button { font-family: inherit; }
 .glow-cyan  { filter: drop-shadow(0 0 28px rgba(34,211,238,0.45)); }
 .glow-amber { filter: drop-shadow(0 0 28px rgba(251,191,36,0.4)); }
 
-/* ═══════════════ GLASS CARD — FIXED ═══════════════ */
+/* ═══════════════ GLASS CARD ═══════════════ */
 .glass-card {
   background: linear-gradient(160deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255,255,255,0.085);
   border-radius: 18px;
+  position: relative !important;
+  display: block;
+  height: auto;
+  width: 100%;
   transition: transform 0.35s cubic-bezier(.4,0,.2,1),
               border-color 0.35s ease,
-              box-shadow 0.35s ease,
-              background 0.35s ease;
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+              box-shadow 0.35s ease;
 }
 
 .glass-card:hover {
   transform: translateY(-6px);
   background: linear-gradient(160deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
   border-color: rgba(34,211,238,0.35);
-  box-shadow: 0 18px 50px -18px rgba(34,211,238,0.35),
-              0 0 0 1px rgba(34,211,238,0.08);
+  box-shadow: 0 18px 50px -18px rgba(34,211,238,0.35);
 }
 
-.card-pad { padding: 30px 28px; }
+.card-pad { padding: 26px 24px; }
 
 /* ═══════════════ BUTTONS ═══════════════ */
 .btn-glow, .btn-thunder, .btn-outline {
@@ -194,7 +283,7 @@ button { font-family: inherit; }
   align-items: center;
   justify-content: center;
   gap: 9px;
-  padding: 15px 34px;
+  padding: 14px 28px;
   border-radius: 13px;
   font-weight: 700;
   font-size: 15px;
@@ -266,7 +355,7 @@ button { font-family: inherit; }
   align-items: center;
 }
 
-/* ═══════════════ BACKGROUND ═══════════════ */
+/* ═══════════════ BACKGROUND & EFFECTS ═══════════════ */
 .bg-animated {
   background: #05060f;
   position: relative;
@@ -346,22 +435,6 @@ button { font-family: inherit; }
   99% { opacity: 0; }
 }
 
-.bolt-path {
-  stroke-dasharray: 300;
-  stroke-dashoffset: 300;
-  animation: boltDraw 6s ease-in-out infinite;
-}
-
-@keyframes boltDraw {
-  0%   { stroke-dashoffset: 300; opacity: 0; }
-  14%  { stroke-dashoffset: 0;   opacity: 1; }
-  24%  { opacity: 1; }
-  32%  { opacity: 0.15; }
-  40%  { opacity: 1; }
-  58%  { opacity: 0; }
-  100% { stroke-dashoffset: 300; opacity: 0; }
-}
-
 /* ═══════════════ BADGE ═══════════════ */
 .badge-pulse {
   display: inline-flex;
@@ -432,33 +505,6 @@ button { font-family: inherit; }
   background: rgba(34,211,238,0.12);
   border-color: rgba(34,211,238,0.4);
   color: #67e8f9;
-}
-
-/* ═══════════════ FAQ ═══════════════ */
-.faq-item { margin-bottom: 14px; }
-
-.faq-btn {
-  width: 100%;
-  padding: 22px 26px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  text-align: left;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  font-size: 15.5px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.faq-answer {
-  padding: 0 26px 24px 26px;
-  color: #94a3b8;
-  font-size: 14.5px;
-  line-height: 1.75;
 }
 
 /* ═══════════════ INPUTS ═══════════════ */

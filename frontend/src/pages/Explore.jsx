@@ -1,161 +1,97 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
-import { FaSearch } from 'react-icons/fa'
 
-const SKILLS = [
-  "Python", "JavaScript", "React", "Java", "C++", "Web Development",
-  "Photoshop", "Guitar", "Spoken English", "Data Science", "UI/UX Design", "Video Editing"
-]
+const SKILLS = ['All', 'Python', 'JavaScript', 'React', 'Java', 'C++', 'Web Development', 'Photoshop', 'Guitar', 'Spoken English', 'Data Science', 'UI/UX Design', 'Video Editing']
 
 const Explore = () => {
-  const { token } = useAuth()
-  const [users, setUsers] = useState([])
-  const [search, setSearch] = useState('')
-  const [skill, setSkill] = useState('')
+  const { token, user } = useAuth()
+  const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedSkill, setSelectedSkill] = useState('All')
 
-  const fetchUsers = async () => {
-    setLoading(true)
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const res = await axios.get('/api/users')
+        setStudents(res.data.users || res.data || [])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStudents()
+  }, [])
+
+  const handleRequest = async (targetId) => {
+    if (!token) return toast.error('Please login first!')
     try {
-      const params = {}
-      if (skill) params.skill = skill
-      if (search) params.search = search
-      const res = await axios.get('/api/users/explore', { params })
-      setUsers(res.data.users || [])
+      await axios.post('/api/swaps/request', { recipientId: targetId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      toast.success('Swap request sent!')
     } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
+      toast.error(err.response?.data?.message || 'Failed to send request')
     }
   }
 
-  useEffect(() => {
-    fetchUsers()
-  }, [skill])
+  const filtered = selectedSkill === 'All'
+    ? students
+    : students.filter(s => s.canTeach?.includes(selectedSkill) || s.wantToLearn?.includes(selectedSkill))
 
-  const sendRequest = async (userId, mySkill, theirSkill) => {
-    try {
-      const res = await axios.post('/api/swaps', {
-        receiverId: userId,
-        senderTeaches: mySkill || 'Skill',
-        receiverTeaches: theirSkill || 'Skill'
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      toast.success(res.data.message)
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send swap request")
-    }
+  if (loading) {
+    return <div className="container-x" style={{ padding: '40px 28px' }}>Loading...</div>
   }
 
   return (
-    <div className="pt-32 pb-16 container-x">
-      <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl font-black mb-8">
-        Explore <span className="gradient-text">Students</span> 🔍
-      </motion.h1>
+    <div className="container-x" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
+      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '8px' }}>
+        Explore <span className="gradient-text">Partners</span>
+      </h1>
+      <p style={{ color: '#94a3b8', marginBottom: '28px' }}>Find students to exchange skills with</p>
 
-      <div className="flex gap-3 mb-6">
-        <div className="relative flex-1">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && fetchUsers()}
-            placeholder="Search by name..."
-            className="input-glass pl-12"
-          />
-        </div>
-        <button onClick={fetchUsers} className="btn-glow px-6">Search</button>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-10">
-        <button
-          onClick={() => setSkill('')}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition ${!skill ? 'bg-purple-600 text-white' : 'glass-card text-gray-400'}`}
-        >
-          All
-        </button>
-        {SKILLS.map(s => (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '28px' }}>
+        {SKILLS.map((skill) => (
           <button
-            key={s}
-            onClick={() => setSkill(s)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition ${skill === s ? 'bg-purple-600 text-white' : 'glass-card text-gray-400'}`}
+            key={skill}
+            onClick={() => setSelectedSkill(skill)}
+            className={selectedSkill === skill ? 'btn-glow' : 'btn-outline'}
+            style={{ padding: '8px 16px', fontSize: '13px' }}
           >
-            {s}
+            {skill}
           </button>
         ))}
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : users.length === 0 ? (
-        <div className="glass-card p-12 text-center">
-          <span className="text-5xl block mb-4">😕</span>
-          <h3 className="text-xl font-bold">No students found</h3>
-          <p className="text-gray-400 mt-2">Try a different search or filter!</p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((u, i) => (
-            <motion.div
-              key={u._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="glass-card p-6"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <img
-                  src={u.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=default"}
-                  alt=""
-                  className="w-12 h-12 rounded-full border-2 border-purple-500/30"
-                />
-                <div>
-                  <h3 className="font-bold">{u.name}</h3>
-                  <p className="text-gray-500 text-xs">{u.branch} • Year {u.year}</p>
-                </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+        {filtered.map((s) => (
+          <div key={s._id} className="glass-card card-pad">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <img
+                src={s.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
+                alt=""
+                style={{ width: 48, height: 48, borderRadius: '50%' }}
+              />
+              <div>
+                <h3 style={{ fontWeight: 700 }}>{s.name}</h3>
+                <p style={{ color: '#64748b', fontSize: 12 }}>{s.branch || 'Student'} • Year {s.year || '1'}</p>
               </div>
+            </div>
 
-              {u.canTeach?.length > 0 && (
-                <div className="mb-2">
-                  <p className="text-xs text-gray-500 mb-1">Can Teach:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {u.canTeach.map(s => (
-                      <span key={s} className="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">{s}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {u.wantToLearn?.length > 0 && (
-                <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-1">Wants to Learn:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {u.wantToLearn.map(s => (
-                      <span key={s} className="text-xs px-2 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">{s}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {token && (
-                <button
-                  onClick={() => sendRequest(u._id, u.wantToLearn?.[0], u.canTeach?.[0])}
-                  className="w-full py-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition text-sm font-medium"
-                >
-                  🤝 Send Swap Request
-                </button>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      )}
+            {user?._id !== s._id && (
+              <button
+                onClick={() => handleRequest(s._id)}
+                className="btn-glow"
+                style={{ width: '100%', padding: '10px' }}
+              >
+                🤝 Send Swap Request
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
