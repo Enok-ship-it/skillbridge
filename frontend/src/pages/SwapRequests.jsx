@@ -38,24 +38,24 @@ const SwapRequests = () => {
   }
 
   if (loading) {
-    return <div className="page-wrapper" style={{ textAlign: 'center' }}>Loading Swaps...</div>
+    return <div className="container-x" style={{ padding: '40px 28px' }}>Loading...</div>
   }
 
   return (
-    <div className="page-wrapper">
-      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '6px' }}>
+    <div className="container-x" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
+      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '8px' }}>
         My <span className="gradient-text">Swap Requests</span>
       </h1>
-      <p style={{ color: '#94a3b8', fontSize: '1rem', marginBottom: '24px' }}>Manage your incoming and outgoing requests</p>
+      <p style={{ color: '#94a3b8', marginBottom: '28px' }}>Manage your incoming and outgoing requests</p>
 
       {swaps.length === 0 ? (
-        <div className="glass-card card-pad" style={{ textAlign: 'center', padding: '40px' }}>
+        <div className="glass-card card-pad" style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '48px', marginBottom: '12px' }}>📬</div>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>No swap requests</h3>
           <p style={{ color: '#94a3b8' }}>Explore students and send your first swap request!</p>
         </div>
       ) : (
-        <div className="cards-grid-container">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {swaps.map((s) => (
             <div key={s._id} className="glass-card card-pad">
               <p style={{ fontWeight: 700, marginBottom: '10px' }}>{s.status?.toUpperCase()}</p>
@@ -64,8 +64,12 @@ const SwapRequests = () => {
               </p>
               {s.status === 'pending' && (
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <button onClick={() => handleAction(s._id, 'accept')} className="btn-glow" style={{ padding: '8px 16px' }}>Accept</button>
-                  <button onClick={() => handleAction(s._id, 'reject')} className="btn-outline" style={{ padding: '8px 16px' }}>Reject</button>
+                  <button onClick={() => handleAction(s._id, 'accept')} className="btn-glow" style={{ padding: '8px 16px' }}>
+                    Accept
+                  </button>
+                  <button onClick={() => handleAction(s._id, 'reject')} className="btn-outline" style={{ padding: '8px 16px' }}>
+                    Reject
+                  </button>
                 </div>
               )}
             </div>

@@ -31,8 +31,8 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="page-wrapper" style={{ textAlign: 'center' }}>
-        <p style={{ color: '#94a3b8', marginTop: '40px' }}>Loading Dashboard...</p>
+      <div className="container-x" style={{ padding: '40px 28px', textAlign: 'center' }}>
+        Loading...
       </div>
     )
   }
@@ -42,74 +42,64 @@ const Dashboard = () => {
   const done = swaps.filter(s => s.status === 'completed').length
 
   return (
-    <div className="page-wrapper">
-      <div>
-        <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '6px' }}>
-          Welcome, <span className="gradient-text">{user?.name?.split(' ')[0]}</span> 👋
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '1rem' }}>Your skill exchange overview</p>
+    <div className="container-x" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
+      <h1 style={{ fontSize: '2.25rem', fontWeight: 900, marginBottom: '8px' }}>
+        Welcome, <span className="gradient-text">{user?.name?.split(' ')[0]}</span> 👋
+      </h1>
+      <p style={{ color: '#94a3b8', marginBottom: '32px' }}>Your skill exchange overview</p>
+
+      {/* STATS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '16px', marginBottom: '28px' }}>
+        {[
+          { label: 'Completed Swaps', value: done, color: '#4ade80' },
+          { label: 'Active Swaps', value: active, color: '#60a5fa' },
+          { label: 'Pending Requests', value: pending, color: '#facc15' },
+          { label: 'Skill Matches', value: matches.length, color: '#c084fc' }
+        ].map((s, i) => (
+          <div key={i} className="glass-card card-pad">
+            <div style={{ fontSize: '1.875rem', fontWeight: 900, color: s.color }}>{s.value}</div>
+            <div style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '4px' }}>{s.label}</div>
+          </div>
+        ))}
       </div>
 
-      {/* STATS CARDS */}
-      <div className="stats-grid-container">
-        <div className="glass-card card-pad">
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#4ade80' }}>{done}</div>
-          <div style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '4px' }}>Completed Swaps</div>
-        </div>
-        <div className="glass-card card-pad">
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#60a5fa' }}>{active}</div>
-          <div style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '4px' }}>Active Swaps</div>
-        </div>
-        <div className="glass-card card-pad">
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#facc15' }}>{pending}</div>
-          <div style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '4px' }}>Pending Requests</div>
-        </div>
-        <div className="glass-card card-pad">
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: '#c084fc' }}>{matches.length}</div>
-          <div style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '4px' }}>Skill Matches</div>
-        </div>
-      </div>
-
-      {/* ACTION BUTTONS */}
-      <div className="buttons-row-container">
+      {/* BUTTONS */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '40px' }}>
         <Link to="/profile" className="btn-glow">✏️ Edit Skills</Link>
         <Link to="/explore" className="btn-outline">🔍 Find Partners</Link>
         <Link to="/swaps" className="btn-outline">📋 My Swaps</Link>
       </div>
 
-      {/* RECOMMENDED MATCHES */}
-      <div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '16px' }}>
-          🎯 Recommended <span className="gradient-text">Matches</span>
-        </h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '20px' }}>
+        🎯 Recommended <span className="gradient-text">Matches</span>
+      </h2>
 
-        {matches.length === 0 ? (
-          <div className="glass-card card-pad" style={{ textAlign: 'center', padding: '40px' }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔍</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>No matches yet</h3>
-            <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Add skills to your profile to find matches!</p>
-            <Link to="/profile" className="btn-glow">Update Skills</Link>
-          </div>
-        ) : (
-          <div className="cards-grid-container">
-            {matches.slice(0, 6).map((m) => (
-              <div key={m._id} className="glass-card card-pad">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                  <img
-                    src={m.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
-                    alt=""
-                    style={{ width: 44, height: 44, borderRadius: '50%' }}
-                  />
-                  <div>
-                    <h3 style={{ fontWeight: 700, fontSize: '1rem' }}>{m.name}</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.75rem' }}>{m.branch} • Year {m.year}</p>
-                  </div>
+      {matches.length === 0 ? (
+        <div className="glass-card card-pad" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔍</div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>No matches yet</h3>
+          <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Add skills to your profile to find matches!</p>
+          <Link to="/profile" className="btn-glow">Update Skills</Link>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '24px' }}>
+          {matches.slice(0, 6).map((m) => (
+            <div key={m._id} className="glass-card card-pad">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <img
+                  src={m.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
+                  alt=""
+                  style={{ width: 48, height: 48, borderRadius: '50%' }}
+                />
+                <div>
+                  <h3 style={{ fontWeight: 700 }}>{m.name}</h3>
+                  <p style={{ color: '#64748b', fontSize: 12 }}>{m.branch} • Year {m.year}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
