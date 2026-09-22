@@ -11,10 +11,22 @@ const User = require('../models/User');
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, branch, year, college } = req.body;
+    const { name, email, password, branch, year, college, acceptedTerms } = req.body;
+
+    if (!name?.trim() || !email?.trim() || !password) {
+      return res.status(400).json({ success: false, message: "Name, email, and password are required" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+    }
+    if (acceptedTerms !== true) {
+      return res.status(400).json({ success: false, message: "You must accept the Terms of Use and Privacy Notice" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -31,12 +43,13 @@ router.post('/register', async (req, res) => {
 
     // Create new user in database
     const user = await User.create({
-      name,
-      email,
+      name: name.trim(),
+      email: normalizedEmail,
       password: hashedPassword,
-      branch: branch || "BCA",
-      year: year || 3,
-      college: college || "My College"
+      branch: branch || "B.Tech",
+      year: year || 4,
+      college: college || "My College",
+      termsAcceptedAt: new Date()
     });
 
     // Generate JWT token for immediate login after registration

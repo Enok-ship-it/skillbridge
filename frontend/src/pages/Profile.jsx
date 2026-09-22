@@ -15,7 +15,7 @@ const SKILLS = [
 
 const Profile = () => {
   const { user, token, fetchUser } = useAuth()
-  const [p, setP] = useState({ name: '', bio: '', branch: 'BCA', year: 3, college: '', canTeach: [], wantToLearn: [] })
+  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', canTeach: [], wantToLearn: [] })
   const [newTeach, setNewTeach] = useState('')
   const [newLearn, setNewLearn] = useState('')
   const [saving, setSaving] = useState(false)
@@ -29,8 +29,8 @@ const Profile = () => {
         setP({
           name: u.name || '',
           bio: u.bio || '',
-          branch: u.branch || 'BCA',
-          year: u.year || 3,
+          branch: u.branch || 'B.Tech',
+          year: u.year || 4,
           college: u.college || '',
           canTeach: u.canTeach || [],
           wantToLearn: u.wantToLearn || []
@@ -97,6 +97,7 @@ const Profile = () => {
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Branch</label>
               <select value={p.branch} onChange={e => setP({...p, branch: e.target.value})} className="input-glass">
+                <option value="B.Tech">B.Tech</option>
                 <option value="BCA">BCA</option>
                 <option value="BBA">BBA</option>
                 <option value="BSc">BSc</option>
@@ -110,6 +111,7 @@ const Profile = () => {
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
                 <option value={3}>3rd Year</option>
+                <option value={4}>4th Year</option>
               </select>
             </div>
           </div>

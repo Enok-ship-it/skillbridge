@@ -10,6 +10,8 @@ import Dashboard from './pages/Dashboard'
 import Explore from './pages/Explore'
 import Profile from './pages/Profile'
 import SwapRequests from './pages/SwapRequests'
+import { Terms, Privacy, CommunityGuidelines } from './pages/Legal'
+import ScrollToTop from './components/ScrollToTop'
 
 const PageWrap = ({ children }) => (
   <motion.div
@@ -45,6 +47,7 @@ function App() {
       <div className="orb orb-3"></div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
+        <ScrollToTop />
         <Navbar />
 
         {/* paddingTop = fixed navbar height so content is never hidden */}
@@ -58,6 +61,10 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><PageWrap><Dashboard /></PageWrap></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><PageWrap><Profile /></PageWrap></ProtectedRoute>} />
               <Route path="/swaps" element={<ProtectedRoute><PageWrap><SwapRequests /></PageWrap></ProtectedRoute>} />
+              <Route path="/terms" element={<PageWrap><Terms /></PageWrap>} />
+              <Route path="/privacy" element={<PageWrap><Privacy /></PageWrap>} />
+              <Route path="/community-guidelines" element={<PageWrap><CommunityGuidelines /></PageWrap>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
         </main>

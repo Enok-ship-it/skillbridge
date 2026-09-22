@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 const Register = () => {
   const [form, setForm] = useState({
     name: '', email: '', password: '', confirm: '',
-    branch: 'BCA', year: 3, college: ''
+    branch: 'B.Tech', year: 4, college: '', acceptedTerms: false
   })
   const [loading, setLoading] = useState(false)
   const { register } = useAuth()
@@ -19,6 +19,7 @@ const Register = () => {
     e.preventDefault()
     if (form.password !== form.confirm) return toast.error("Passwords don't match!")
     if (form.password.length < 6) return toast.error("Password must be at least 6 characters!")
+    if (!form.acceptedTerms) return toast.error('Please accept the Terms of Use and Privacy Notice.')
     setLoading(true)
     try {
       const data = await register({
@@ -27,7 +28,8 @@ const Register = () => {
         password: form.password,
         branch: form.branch,
         year: parseInt(form.year),
-        college: form.college
+        college: form.college,
+        acceptedTerms: form.acceptedTerms
       })
       toast.success(data.message)
       navigate('/profile')
@@ -79,7 +81,8 @@ const Register = () => {
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Branch</label>
               <select name="branch" value={form.branch} onChange={handleChange} className="input-glass">
-                <option value="BCA">BCA</option>
+              <option value="B.Tech">B.Tech</option>
+              <option value="BCA">BCA</option>
                 <option value="BBA">BBA</option>
                 <option value="BSc">BSc</option>
                 <option value="BTech">BTech</option>
@@ -92,9 +95,14 @@ const Register = () => {
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
                 <option value={3}>3rd Year</option>
+                <option value={4}>4th Year</option>
               </select>
             </div>
           </div>
+          <label className="consent-row">
+            <input type="checkbox" name="acceptedTerms" checked={form.acceptedTerms} onChange={e => setForm({ ...form, acceptedTerms: e.target.checked })} />
+            <span>I agree to the <Link to="/terms">Terms of Use</Link>, <Link to="/privacy">Privacy Notice</Link>, and <Link to="/community-guidelines">Community Guidelines</Link>.</span>
+          </label>
           <button type="submit" disabled={loading} className="btn-glow w-full text-center py-4 mt-4">
             {loading ? "Creating..." : "Create Account 🎉"}
           </button>

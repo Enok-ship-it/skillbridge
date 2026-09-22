@@ -26,15 +26,21 @@ const userSchema = new mongoose.Schema({
   // College Info
   branch: {
     type: String,
-    default: "BCA"
+    default: "B.Tech",
+    trim: true,
+    maxlength: 60
   },
   year: {
     type: Number,
-    default: 3
+    default: 4,
+    min: 1,
+    max: 6
   },
   college: {
     type: String,
-    default: "My College"
+    default: "My College",
+    trim: true,
+    maxlength: 120
   },
 
   // Skills — Arrays of strings
@@ -54,6 +60,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Hey! I'm new on SkillBridge 👋",
     maxlength: 300
+  },
+
+  // Legal consent is recorded during registration rather than assumed.
+  termsAcceptedAt: {
+    type: Date,
+    default: null
   },
   avatar: {
     type: String,
