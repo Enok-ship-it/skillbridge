@@ -60,7 +60,7 @@ const Navbar = () => {
             className="brand-mark"
             style={{ lineHeight: 1 }}
           >
-            SB
+            <span className="brand-mark-bolt" aria-hidden="true">↯</span>
           </motion.span>
           <span className={isHome ? 'home-brand' : 'gradient-text'} style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em', color: isHome ? '#1f2421' : undefined }}>
             SkillBridge

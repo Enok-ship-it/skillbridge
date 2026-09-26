@@ -79,12 +79,12 @@ const Profile = () => {
   }
 
   return (
-    <div className="pt-32 pb-16 container-x max-w-4xl">
+    <div className="profile-page pt-32 pb-16 container-x max-w-4xl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-4xl font-black mb-8">Edit <span className="gradient-text">Profile</span> ✏️</h1>
+        <div className="profile-heading"><span className="eyebrow"><span className="live-dot" />YOUR IDENTITY CARD</span><h1>Edit <span className="gradient-text">Profile</span></h1><p>Make it easy for the right person to understand what you bring and what you are ready to learn.</p></div>
 
         <div className="glass-card p-8 mb-6">
-          <h2 className="text-xl font-bold mb-6">Basic Info</h2>
+          <h2 className="profile-section-title">The basics</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Name</label>
@@ -122,7 +122,7 @@ const Profile = () => {
         </div>
 
         <div className="glass-card p-8 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-green-400">🎓 Skills I Can Teach</h2>
+          <h2 className="profile-section-title"><span className="profile-section-icon profile-section-icon-teach">↗</span> Skills I can teach</h2>
           <div className="flex flex-wrap gap-2 mb-4">
             {p.canTeach.map(s => (
               <span key={s} className="px-3 py-1 rounded-full text-sm bg-green-500/10 text-green-400 border border-green-500/20 flex items-center gap-2">
@@ -140,7 +140,7 @@ const Profile = () => {
         </div>
 
         <div className="glass-card p-8 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-orange-400">📚 Skills I Want to Learn</h2>
+          <h2 className="profile-section-title"><span className="profile-section-icon profile-section-icon-learn">↘</span> Skills I want to learn</h2>
           <div className="flex flex-wrap gap-2 mb-4">
             {p.wantToLearn.map(s => (
               <span key={s} className="px-3 py-1 rounded-full text-sm bg-orange-500/10 text-orange-400 border border-orange-500/20 flex items-center gap-2">

@@ -7,7 +7,7 @@ const Footer = () => (
 
         <div className="footer-brand">
           <div className="footer-brand-title">
-            <span className="brand-mark" aria-hidden="true">SB</span>
+            <span className="brand-mark" aria-hidden="true"><span className="brand-mark-bolt">↯</span></span>
             <span className="footer-brand-word">SkillBridge</span>
           </div>
           <p>

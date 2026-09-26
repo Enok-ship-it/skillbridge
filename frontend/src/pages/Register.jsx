@@ -48,7 +48,7 @@ const Register = () => {
         className="glass-card auth-card p-8 md:p-12 w-full max-w-lg"
       >
         <div className="text-center mb-8">
-          <span className="auth-sigil">SB</span>
+          <span className="auth-sigil"><span className="brand-mark-bolt">↯</span></span>
           <h2 className="text-3xl font-black mt-3">Put your skills in motion.</h2>
           <p className="text-gray-400 mt-2">Build a profile people can actually learn from.</p>
         </div>
