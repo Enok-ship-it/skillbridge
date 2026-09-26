@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { motion } from 'framer-motion'
 import {
   HiAdjustmentsHorizontal, HiArrowRight, HiCheckCircle, HiMagnifyingGlass,
   HiOutlineAcademicCap, HiOutlineChatBubbleBottomCenterText, HiOutlineXMark,
@@ -82,7 +83,7 @@ const Explore = () => {
       {error ? <div className="empty-state"><div className="empty-icon"><HiOutlineAcademicCap /></div><h2>We could not load the community.</h2><p>{error}</p><button className="button button-primary" onClick={() => window.location.reload()}>Try again</button></div> :
         loading ? <div className="partner-grid"><PartnerSkeleton /><PartnerSkeleton /><PartnerSkeleton /></div> :
           visibleStudents.length === 0 ? <div className="empty-state"><div className="empty-icon"><HiMagnifyingGlass /></div><h2>No match for those filters.</h2><p>Try a different skill or broaden your programme filter.</p><button className="button button-secondary" onClick={() => { setSelectedSkill('All'); setBranch('All branches'); setQuery('') }}>Reset filters</button></div> :
-            <div className="partner-grid">{visibleStudents.map((student) => <PartnerCard key={student._id} student={student} currentUser={user} onRequest={() => startRequest(student)} />)}</div>}
+            <motion.div className="partner-grid" initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}>{visibleStudents.map((student) => <PartnerCard key={student._id} student={student} currentUser={user} onRequest={() => startRequest(student)} />)}</motion.div>}
 
       {selectedPartner && <SwapRequestDialog partner={selectedPartner} currentUser={user} token={token} onClose={() => setSelectedPartner(null)} />}
     </section>
@@ -94,14 +95,14 @@ const PartnerCard = ({ student, currentUser, onRequest }) => {
   const mutualSkills = student.wantToLearn?.filter((skill) => currentUser?.canTeach?.includes(skill)) || []
   const isMutual = mutualSkills.length > 0 && learningMatches.length > 0
   return (
-    <article className="partner-card">
+    <motion.article className="partner-card" variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } }} transition={{ duration: 0.35 }}>
       <div className="partner-topline"><img className="member-avatar member-avatar-large" src={avatarFor(student)} alt={`${student.name}'s avatar`} /><span className={isMutual ? 'match-badge mutual' : 'match-badge'}>{isMutual ? 'Mutual exchange' : 'Available to teach'}</span></div>
       <div className="partner-heading"><h2>{student.name}</h2><p>{student.branch || 'Student'} · Year {student.year || '—'}</p>{student.college && <span>{student.college}</span>}</div>
       {student.bio && <p className="partner-bio">{student.bio}</p>}
       <div className="partner-skills"><p><span>Can teach</span></p><div>{(student.canTeach || []).slice(0, 4).map((skill) => <span className={learningMatches.includes(skill) ? 'skill-chip skill-chip-learn highlighted' : 'skill-chip skill-chip-learn'} key={skill}>{skill}</span>)}{student.canTeach?.length > 4 && <span className="skill-more">+{student.canTeach.length - 4}</span>}</div></div>
       <div className="partner-skills partner-skills-secondary"><p><span>Wants to learn</span></p><div>{(student.wantToLearn || []).slice(0, 3).map((skill) => <span className={mutualSkills.includes(skill) ? 'skill-chip skill-chip-teach highlighted' : 'skill-chip skill-chip-teach'} key={skill}>{skill}</span>)}</div></div>
       <button className="button button-primary partner-action" onClick={onRequest}>Propose an exchange <HiArrowRight /></button>
-    </article>
+    </motion.article>
   )
 }
 

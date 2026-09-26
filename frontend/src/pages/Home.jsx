@@ -33,19 +33,27 @@ const Home = () => {
   const [query, setQuery] = useState('')
   const [openFaq, setOpenFaq] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [communityError, setCommunityError] = useState('')
 
-  useEffect(() => {
+  const loadCommunity = () => {
     const controller = new AbortController()
+    setLoading(true)
+    setCommunityError('')
     axios.get('/api/users/explore', { signal: controller.signal })
       .then(({ data }) => setStudents(data.users || []))
       .catch((error) => {
-        if (error.name !== 'CanceledError') setStudents([])
+        if (error.name !== 'CanceledError') {
+          setStudents([])
+          setCommunityError('The live directory is offline right now. Start the backend and try again.')
+        }
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [])
+  }
+
+  useEffect(() => loadCommunity(), [])
 
   const skills = useMemo(() => {
     const counts = new Map()
@@ -110,13 +118,13 @@ const Home = () => {
             <div className="live-board-header"><div><span className="live-dot" /> Live student directory</div><Link to="/explore">Open full directory <HiArrowUpRight /></Link></div>
             <label className="live-search"><HiMagnifyingGlass /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a name, programme, or skill" aria-label="Search the student community" /></label>
             <div className="live-students">
-              {visibleStudents.length ? visibleStudents.map((student) => (
+              {communityError ? <div className="live-empty live-empty-error"><HiOutlineArrowPath /><span>{communityError}</span><button type="button" onClick={loadCommunity}>Retry</button></div> : visibleStudents.length ? visibleStudents.map((student) => (
                 <Link to="/explore" className="live-student" key={student._id}>
                   <img src={avatarFor(student)} alt="" />
                   <div><strong>{student.name}</strong><span>{student.branch || 'Student'} {student.college ? `· ${student.college}` : ''}</span></div>
                   <div className="student-skill">{student.canTeach?.[0] || 'Ready to connect'} <HiArrowUpRight /></div>
                 </Link>
-              )) : <div className="live-empty"><HiOutlineArrowPath /> {loading ? 'Loading the latest student profiles…' : 'The directory is warming up. Be the first profile people find.'}</div>}
+              )) : <div className="live-empty"><HiOutlineArrowPath /> {loading ? 'Loading the latest student profiles…' : query ? `No student matches “${query}”. Try a broader search.` : 'The directory is warming up. Be the first profile people find.'}</div>}
             </div>
           </div>
         </div>

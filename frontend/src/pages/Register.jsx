@@ -41,16 +41,16 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-24 pb-12">
+    <div className="auth-shell min-h-screen flex items-center justify-center px-6 pt-24 pb-12">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card p-8 md:p-12 w-full max-w-lg"
+        className="glass-card auth-card p-8 md:p-12 w-full max-w-lg"
       >
         <div className="text-center mb-8">
-          <span className="text-4xl">🚀</span>
-          <h2 className="text-3xl font-black mt-3">Join SkillBridge</h2>
-          <p className="text-gray-400 mt-2">Start swapping skills today</p>
+          <span className="auth-sigil">SB</span>
+          <h2 className="text-3xl font-black mt-3">Put your skills in motion.</h2>
+          <p className="text-gray-400 mt-2">Build a profile people can actually learn from.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -104,11 +104,11 @@ const Register = () => {
             <span>I agree to the <Link to="/terms">Terms of Use</Link>, <Link to="/privacy">Privacy Notice</Link>, and <Link to="/community-guidelines">Community Guidelines</Link>.</span>
           </label>
           <button type="submit" disabled={loading} className="btn-glow w-full text-center py-4 mt-4">
-            {loading ? "Creating..." : "Create Account 🎉"}
+            {loading ? "Building your profile..." : "Create my profile →"}
           </button>
         </form>
         <p className="text-center text-gray-500 mt-6 text-sm">
-          Already have an account? <Link to="/login" className="text-purple-400 font-medium">Login</Link>
+          Already part of the exchange? <Link to="/login" className="auth-link font-medium">Sign in</Link>
         </p>
       </motion.div>
     </div>

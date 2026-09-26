@@ -26,16 +26,16 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-20">
+    <div className="auth-shell min-h-screen flex items-center justify-center px-6 pt-20">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card p-8 md:p-12 w-full max-w-md"
+        className="glass-card auth-card p-8 md:p-12 w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <span className="text-4xl">🎓</span>
-          <h2 className="text-3xl font-black mt-3">Welcome Back</h2>
-          <p className="text-gray-400 mt-2">Login to continue your journey</p>
+          <span className="auth-sigil">SB</span>
+          <h2 className="text-3xl font-black mt-3">Pick up your thread.</h2>
+          <p className="text-gray-400 mt-2">Sign in to keep your exchanges moving.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -61,11 +61,11 @@ const Login = () => {
             />
           </div>
           <button type="submit" disabled={loading} className="btn-glow w-full text-center py-4">
-            {loading ? "Logging in..." : "Login →"}
+            {loading ? "Opening your space..." : "Enter SkillBridge →"}
           </button>
         </form>
         <p className="text-center text-gray-500 mt-6 text-sm">
-          Don't have an account? <Link to="/register" className="text-purple-400 hover:text-purple-300 font-medium">Register</Link>
+          New to the exchange? <Link to="/register" className="auth-link font-medium">Create your profile</Link>
         </p>
       </motion.div>
     </div>
