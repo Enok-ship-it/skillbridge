@@ -7,6 +7,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const User = require('./models/User');
+const SwapRequest = require('./models/SwapRequest');
 
 // MIDDLEWARE — These run before every request
 // cors() allows your frontend (React) to talk to this backend
@@ -27,6 +29,25 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/user'));
 // /api/swaps handles skill exchange requests
 app.use('/api/swaps', require('./routes/swaps'));
+app.get('/api/stats', async (req, res) => {
+  try {
+    const [students, skillGroups, exchanges, completedExchanges] = await Promise.all([
+      User.countDocuments(),
+      User.aggregate([
+        { $project: { skills: { $setUnion: ['$canTeach', '$wantToLearn'] } } },
+        { $unwind: '$skills' },
+        { $group: { _id: '$skills' } },
+        { $count: 'total' }
+      ]),
+      SwapRequest.countDocuments(),
+      SwapRequest.countDocuments({ status: 'completed' })
+    ]);
+    res.json({ students, skills: skillGroups[0]?.total || 0, exchanges, completedExchanges });
+  } catch (error) {
+    console.error('Public stats unavailable:', error.message);
+    res.status(503).json({ message: 'Community stats are temporarily unavailable.' });
+  }
+});
 // /api/reviews handles ratings after sessions
 //app.use('/api/reviews', require('./routes/reviews'));
 

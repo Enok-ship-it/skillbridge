@@ -8,6 +8,7 @@ const Navbar = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const isHome = location.pathname === '/'
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -35,10 +36,14 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        background: scrolled ? 'rgba(5,6,15,0.9)' : 'rgba(5,6,15,0.4)',
+        background: isHome
+          ? (scrolled ? 'rgba(244,240,232,0.94)' : 'rgba(244,240,232,0.72)')
+          : (scrolled ? 'rgba(5,6,15,0.9)' : 'rgba(5,6,15,0.4)'),
         backdropFilter: 'blur(26px)',
         WebkitBackdropFilter: 'blur(26px)',
-        borderBottom: scrolled ? '1px solid rgba(34,211,238,0.14)' : '1px solid rgba(255,255,255,0.05)',
+        borderBottom: isHome
+          ? '1px solid rgba(31,36,33,0.12)'
+          : (scrolled ? '1px solid rgba(34,211,238,0.14)' : '1px solid rgba(255,255,255,0.05)'),
         boxShadow: scrolled ? '0 8px 30px -14px rgba(0,0,0,0.7)' : 'none',
         transition: 'background .3s, border-color .3s, box-shadow .3s'
       }}
@@ -50,13 +55,14 @@ const Navbar = () => {
 
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
           <motion.span
-            whileHover={{ rotate: [0, -16, 16, 0], scale: 1.18 }}
-            transition={{ duration: 0.5 }}
-            style={{ fontSize: '25px', lineHeight: 1 }}
+            whileHover={{ rotate: [0, -5, 5, 0], scale: 1.08 }}
+            transition={{ duration: 0.35 }}
+            className="brand-mark"
+            style={{ lineHeight: 1 }}
           >
-            🎓
+            SB
           </motion.span>
-          <span className="gradient-text" style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em' }}>
+          <span className={isHome ? 'home-brand' : 'gradient-text'} style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em', color: isHome ? '#1f2421' : undefined }}>
             SkillBridge
           </span>
         </Link>
@@ -74,13 +80,13 @@ const Navbar = () => {
                   borderRadius: '10px',
                   fontSize: '14.5px',
                   fontWeight: 500,
-                  color: active ? '#67e8f9' : '#94a3b8',
-                  background: active ? 'rgba(34,211,238,0.08)' : 'transparent',
+                  color: isHome ? (active ? '#e66b4f' : '#66736a') : (active ? '#67e8f9' : '#94a3b8'),
+                  background: isHome ? (active ? 'rgba(230,107,79,0.1)' : 'transparent') : (active ? 'rgba(34,211,238,0.08)' : 'transparent'),
                   transition: 'color .25s, background .25s',
                   whiteSpace: 'nowrap'
                 }}
-                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' } }}
-                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent' } }}
+                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = isHome ? '#1f2421' : '#fff'; e.currentTarget.style.background = isHome ? 'rgba(31,36,33,0.06)' : 'rgba(255,255,255,0.05)' } }}
+                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = isHome ? '#66736a' : '#94a3b8'; e.currentTarget.style.background = 'transparent' } }}
               >
                 {l.label}
                 {active && (
@@ -131,11 +137,11 @@ const Navbar = () => {
           ) : (
             <>
               <Link to="/login" style={{
-                color: '#cbd5e1', fontSize: '14.5px', fontWeight: 500,
+                color: isHome ? '#66736a' : '#cbd5e1', fontSize: '14.5px', fontWeight: 500,
                 padding: '9px 16px', transition: 'color .25s'
               }}
-                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-                onMouseLeave={e => e.currentTarget.style.color = '#cbd5e1'}
+                onMouseEnter={e => e.currentTarget.style.color = isHome ? '#1f2421' : '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = isHome ? '#66736a' : '#cbd5e1'}
               >
                 Login
               </Link>
@@ -150,7 +156,7 @@ const Navbar = () => {
           className="nav-burger"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
-          style={{ background: 'none', border: 'none', color: '#fff', fontSize: '26px', cursor: 'pointer', display: 'none' }}
+          style={{ background: 'none', border: 'none', color: isHome ? '#1f2421' : '#fff', fontSize: '26px', cursor: 'pointer', display: 'none' }}
         >
           {open ? <HiX /> : <HiMenu />}
         </button>

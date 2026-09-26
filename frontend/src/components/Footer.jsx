@@ -7,14 +7,14 @@ const Footer = () => (
 
         <div className="footer-brand">
           <div className="footer-brand-title">
-            <span aria-hidden="true">🎓</span>
-            <span className="gradient-text">SkillBridge</span>
+            <span className="brand-mark" aria-hidden="true">SB</span>
+            <span className="footer-brand-word">SkillBridge</span>
           </div>
           <p>
             A safer way for college students to exchange practical knowledge, build confidence, and learn together.
           </p>
           <div className="footer-stack" aria-label="Technology stack">
-            <span>React</span><span>Node.js</span><span>MongoDB</span><span>Express</span>
+            <span>Peer learning</span><span>Open exchange</span><span>Student built</span>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ const Footer = () => (
 
       <div className="footer-bottom">
         <p>© 2026 SkillBridge. Learn by teaching, grow by sharing.</p>
-        <p>Final-year B.Tech project · Built for peer learning</p>
+        <p>Final-year project · Built for peer learning</p>
       </div>
     </div>
   </footer>
