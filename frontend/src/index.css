@@ -1262,11 +1262,48 @@ body, .bg-animated { background: var(--page); color: var(--ink-light); }
   html, body, body, .bg-animated { background: var(--page); color: var(--ink-light); }
   .home-new { color: var(--home-ink); background: var(--home-paper); }
   .home-hero, .live-board { background: var(--home-paper); }
+  .home-live-section { background: var(--home-paper-deep); }
   .home-faq-section, .home-cta-section { background: var(--home-paper-deep); }
   .home-process-section { background: #0b1017; color: var(--home-ink); }
   .hero-note { color: var(--home-ink); background: var(--surface-light); border-color: var(--line-light); box-shadow: 18px 22px 0 rgba(0, 0, 0, .25), 0 25px 55px rgba(0, 0, 0, .25); }
   .home-new .button-secondary { color: var(--home-ink); border-color: var(--line-light); }
   .home-new .nav-brand-word { color: var(--home-ink); }
+  .section-intro-row > p { color: #b6c0c3; }
+  .live-board { border-color: rgba(244, 240, 232, .14); }
+  .live-board-header { color: #a9b8b6; }
+  .live-board-header a, .text-link { color: #f4f0e8; }
+  .live-search { background: #202a35; border-color: rgba(244, 240, 232, .18); color: #a9b8b6; }
+  .live-search input { color: var(--home-ink); }
+  .live-search input::placeholder { color: #89999d; }
+  .live-student { border-color: rgba(244, 240, 232, .12); }
+  .live-student:hover { background: rgba(255, 255, 255, .06); }
+  .live-student span { color: #a9b8b6; }
+  .student-skill { color: #c2d2b0; }
+  .live-empty { color: #a9b8b6; }
+  .live-empty-error { color: #f3aa83; }
+  .live-empty-error button { border-color: rgba(245, 185, 66, .45); }
+  .faq-aside-copy, .faq-row p { color: #b6c0c3; }
+  .faq-row { border-color: rgba(244, 240, 232, .2); }
+  .faq-row button { color: var(--home-ink); }
+  .home-cta > div:last-of-type p { color: rgba(255, 255, 255, .86); }
+  .home-cta .button-primary { color: #172018; background: var(--home-lime); }
+  .input-glass, .search-field, .select-field, .filter-chip {
+    color: #aab5c0;
+    border-color: rgba(245, 185, 66, .2);
+    background: rgba(27, 35, 48, .92);
+  }
+  .search-field input::placeholder { color: #82909c; }
+  .search-field input, .select-field select { color: #f4f0e8; }
+  .select-field select option, .exchange-plan option { color: #f4f0e8; background: #1b2330; }
+  .filter-chip { color: #aab5c0; }
+  .filter-chip:hover { color: #f4f0e8; border-color: rgba(245, 185, 66, .52); background: rgba(245, 185, 66, .08); }
+  .filter-chip.active { color: #11151d; background: #f5b942; border-color: #f5b942; }
+  .results-summary { color: #aab5c0; }
+  .results-summary button { color: #f5c966; }
+  .explore-hero-stat { background: rgba(17, 21, 29, .52); border-color: rgba(103, 232, 249, .24); }
+  .explore-hero-stat strong { color: #67dff8; }
+  .match-badge { color: #c1ccd6; border-color: rgba(170, 181, 192, .24); background: rgba(170, 181, 192, .08); }
+  .partner-card { border-color: rgba(245, 185, 66, .2); }
   .accent-word { color: #f5c65d; }
   .accent-word::after { background: #e76f51; }
   .profile-page .text-green-400 { color: #a9d66b; }
