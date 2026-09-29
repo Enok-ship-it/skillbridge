@@ -8,7 +8,6 @@ const Navbar = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const isHome = location.pathname === '/'
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -36,15 +35,11 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        background: isHome
-          ? (scrolled ? 'rgba(244,240,232,0.94)' : 'rgba(244,240,232,0.72)')
-          : (scrolled ? 'rgba(5,6,15,0.9)' : 'rgba(5,6,15,0.4)'),
+        background: scrolled ? 'var(--nav-bg-strong)' : 'var(--nav-bg)',
         backdropFilter: 'blur(26px)',
         WebkitBackdropFilter: 'blur(26px)',
-        borderBottom: isHome
-          ? '1px solid rgba(31,36,33,0.12)'
-          : (scrolled ? '1px solid rgba(34,211,238,0.14)' : '1px solid rgba(255,255,255,0.05)'),
-        boxShadow: scrolled ? '0 8px 30px -14px rgba(0,0,0,0.7)' : 'none',
+        borderBottom: '1px solid var(--nav-line)',
+        boxShadow: scrolled ? '0 8px 30px -14px var(--nav-shadow)' : 'none',
         transition: 'background .3s, border-color .3s, box-shadow .3s'
       }}
     >
@@ -62,7 +57,7 @@ const Navbar = () => {
           >
             <span className="brand-mark-bolt" aria-hidden="true">↯</span>
           </motion.span>
-          <span className={isHome ? 'home-brand' : 'gradient-text'} style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em', color: isHome ? '#1f2421' : undefined }}>
+          <span className="nav-brand-word" style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em' }}>
             SkillBridge
           </span>
         </Link>
@@ -80,13 +75,13 @@ const Navbar = () => {
                   borderRadius: '10px',
                   fontSize: '14.5px',
                   fontWeight: 500,
-                  color: isHome ? (active ? '#e66b4f' : '#66736a') : (active ? '#67e8f9' : '#94a3b8'),
-                  background: isHome ? (active ? 'rgba(230,107,79,0.1)' : 'transparent') : (active ? 'rgba(34,211,238,0.08)' : 'transparent'),
+                  color: active ? 'var(--nav-active)' : 'var(--nav-muted)',
+                  background: active ? 'var(--nav-active-bg)' : 'transparent',
                   transition: 'color .25s, background .25s',
                   whiteSpace: 'nowrap'
                 }}
-                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = isHome ? '#1f2421' : '#fff'; e.currentTarget.style.background = isHome ? 'rgba(31,36,33,0.06)' : 'rgba(255,255,255,0.05)' } }}
-                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = isHome ? '#66736a' : '#94a3b8'; e.currentTarget.style.background = 'transparent' } }}
+                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = 'var(--nav-ink)'; e.currentTarget.style.background = 'var(--nav-hover-bg)' } }}
+                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = 'var(--nav-muted)'; e.currentTarget.style.background = 'transparent' } }}
               >
                 {l.label}
                 {active && (
@@ -96,7 +91,7 @@ const Navbar = () => {
                       position: 'absolute', bottom: '2px', left: '50%',
                       transform: 'translateX(-50%)',
                       width: '22px', height: '2px', borderRadius: '2px',
-                      background: 'linear-gradient(90deg, #22d3ee, #fbbf24)'
+                      background: 'var(--nav-underline)'
                     }}
                   />
                 )}
@@ -112,12 +107,12 @@ const Navbar = () => {
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '6px 12px', borderRadius: '12px', transition: 'background .25s'
               }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--nav-hover-bg)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 <img src={user.avatar} alt="" style={{
                   width: '32px', height: '32px', borderRadius: '50%',
-                  border: '2px solid rgba(34,211,238,0.4)'
+                  border: '2px solid var(--nav-active)'
                 }} />
                 <span style={{ fontSize: '14px', fontWeight: 600 }}>{user.name?.split(' ')[0]}</span>
               </Link>
@@ -125,11 +120,11 @@ const Navbar = () => {
                 onClick={() => { logout(); navigate('/') }}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: '#64748b', fontSize: '14px', fontWeight: 500,
+                  color: 'var(--nav-muted)', fontSize: '14px', fontWeight: 500,
                   padding: '8px 14px', transition: 'color .25s'
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
-                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--nav-danger)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--nav-muted)'}
               >
                 Logout
               </button>
@@ -137,11 +132,11 @@ const Navbar = () => {
           ) : (
             <>
               <Link to="/login" style={{
-                color: isHome ? '#66736a' : '#cbd5e1', fontSize: '14.5px', fontWeight: 500,
+                color: 'var(--nav-muted)', fontSize: '14.5px', fontWeight: 500,
                 padding: '9px 16px', transition: 'color .25s'
               }}
-                onMouseEnter={e => e.currentTarget.style.color = isHome ? '#1f2421' : '#fff'}
-                onMouseLeave={e => e.currentTarget.style.color = isHome ? '#66736a' : '#cbd5e1'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--nav-ink)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--nav-muted)'}
               >
                 Login
               </Link>
@@ -156,7 +151,7 @@ const Navbar = () => {
           className="nav-burger"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
-          style={{ background: 'none', border: 'none', color: isHome ? '#1f2421' : '#fff', fontSize: '26px', cursor: 'pointer', display: 'none' }}
+          style={{ background: 'none', border: 'none', color: 'var(--nav-ink)', fontSize: '26px', cursor: 'pointer', display: 'none' }}
         >
           {open ? <HiX /> : <HiMenu />}
         </button>
@@ -169,33 +164,33 @@ const Navbar = () => {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            style={{ overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(5,6,15,0.98)' }}
+            style={{ overflow: 'hidden', borderTop: '1px solid var(--nav-line)', background: 'var(--nav-mobile-bg)' }}
           >
             <div className="container-x" style={{ paddingTop: '20px', paddingBottom: '24px' }}>
               {links.map(l => (
                 <Link key={l.to} to={l.to} style={{
                   display: 'block', padding: '13px 16px', borderRadius: '10px',
-                  color: '#cbd5e1', fontWeight: 500, marginBottom: '4px'
+                  color: 'var(--nav-muted)', fontWeight: 500, marginBottom: '4px'
                 }}>
                   {l.label}
                 </Link>
               ))}
-              <div style={{ paddingTop: '14px', marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ paddingTop: '14px', marginTop: '10px', borderTop: '1px solid var(--nav-line)' }}>
                 {user ? (
                   <>
-                    <Link to="/profile" style={{ display: 'block', padding: '13px 16px', borderRadius: '10px', color: '#cbd5e1', fontWeight: 500 }}>
+                    <Link to="/profile" style={{ display: 'block', padding: '13px 16px', borderRadius: '10px', color: 'var(--nav-muted)', fontWeight: 500 }}>
                       Profile
                     </Link>
                     <button
                       onClick={() => { logout(); navigate('/') }}
-                      style={{ width: '100%', textAlign: 'left', padding: '13px 16px', borderRadius: '10px', background: 'none', border: 'none', color: '#f87171', fontWeight: 500, cursor: 'pointer', fontSize: '15px' }}
+                      style={{ width: '100%', textAlign: 'left', padding: '13px 16px', borderRadius: '10px', background: 'none', border: 'none', color: 'var(--nav-danger)', fontWeight: 500, cursor: 'pointer', fontSize: '15px' }}
                     >
                       Logout
                     </button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" style={{ display: 'block', padding: '13px 16px', borderRadius: '10px', color: '#cbd5e1', fontWeight: 500, marginBottom: '10px' }}>
+                    <Link to="/login" style={{ display: 'block', padding: '13px 16px', borderRadius: '10px', color: 'var(--nav-muted)', fontWeight: 500, marginBottom: '10px' }}>
                       Login
                     </Link>
                     <Link to="/register" className="btn-glow" style={{ width: '100%' }}>
