@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
-import { FaPlus, FaTimes, FaSave } from 'react-icons/fa'
+import { FaPlus, FaTimes, FaSave, FaCamera, FaCheck } from 'react-icons/fa'
 
 const SKILLS = [
   "Python","JavaScript","React","Node.js","Java","C++","C","HTML/CSS","PHP",
@@ -13,9 +13,18 @@ const SKILLS = [
   "Content Writing","Excel","PowerPoint","Tally","AutoCAD"
 ]
 
+const AVATARS = [
+  { label: 'Sky', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Sky' },
+  { label: 'Mango', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Mango' },
+  { label: 'River', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=River' },
+  { label: 'Nova', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Nova' },
+  { label: 'Pixel', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Pixel' },
+  { label: 'Orbit', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Orbit' }
+]
+
 const Profile = () => {
-  const { user, token, fetchUser } = useAuth()
-  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', canTeach: [], wantToLearn: [] })
+  const { token, fetchUser } = useAuth()
+  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', avatar: '', canTeach: [], wantToLearn: [] })
   const [newTeach, setNewTeach] = useState('')
   const [newLearn, setNewLearn] = useState('')
   const [saving, setSaving] = useState(false)
@@ -32,6 +41,7 @@ const Profile = () => {
           branch: u.branch || 'B.Tech',
           year: u.year || 4,
           college: u.college || '',
+          avatar: u.avatar || AVATARS[0].url,
           canTeach: u.canTeach || [],
           wantToLearn: u.wantToLearn || []
         })
@@ -70,6 +80,17 @@ const Profile = () => {
     }
   }
 
+  const chooseImage = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) return toast.error('Choose an image file')
+    if (file.size > 350000) return toast.error('Please choose an image smaller than 350 KB')
+    const reader = new FileReader()
+    reader.onload = () => setP(current => ({ ...current, avatar: String(reader.result) }))
+    reader.onerror = () => toast.error('Could not read that image')
+    reader.readAsDataURL(file)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
@@ -81,21 +102,48 @@ const Profile = () => {
   return (
     <div className="profile-page pt-32 pb-16 container-x max-w-4xl">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="profile-heading"><span className="eyebrow"><span className="live-dot" />YOUR IDENTITY CARD</span><h1>Edit <span className="gradient-text">Profile</span></h1><p>Make it easy for the right person to understand what you bring and what you are ready to learn.</p></div>
+        <div className="profile-heading"><span className="eyebrow"><span className="live-dot" />YOUR IDENTITY CARD</span><h1>Edit <span className="accent-word">Profile</span></h1><p>Make it easy for the right person to understand what you bring and what you are ready to learn.</p></div>
+
+        <div className="profile-identity-card glass-card">
+          <div className="profile-identity-copy">
+            <span className="profile-kicker">YOUR PHOTO, YOUR CALL</span>
+            <h2>Choose how people meet you.</h2>
+            <p>Use a photo that feels like you, or pick a friendly avatar when you would rather stay private.</p>
+          </div>
+          <div className="profile-avatar-preview">
+            <img src={p.avatar || AVATARS[0].url} alt="Your profile preview" />
+            <label className="avatar-upload-button" title="Upload profile image">
+              <FaCamera aria-hidden="true" />
+              <span>Upload</span>
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={event => chooseImage(event)} />
+            </label>
+          </div>
+          <div className="avatar-picker">
+            <div className="avatar-picker-heading"><span>Or choose an avatar</span><span>{AVATARS.length} options</span></div>
+            <div className="avatar-options">
+              {AVATARS.map(avatar => (
+                <button type="button" key={avatar.label} className={`avatar-option ${p.avatar === avatar.url ? 'selected' : ''}`} onClick={() => setP(current => ({ ...current, avatar: avatar.url }))} aria-label={`Use ${avatar.label} avatar`}>
+                  <img src={avatar.url} alt="" />
+                  {p.avatar === avatar.url && <span><FaCheck aria-hidden="true" /></span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className="glass-card p-8 mb-6">
           <h2 className="profile-section-title">The basics</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">Name</label>
+              <label className="profile-field-label">Name</label>
               <input type="text" value={p.name} onChange={e => setP({...p, name: e.target.value})} className="input-glass" />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">College</label>
+              <label className="profile-field-label">College</label>
               <input type="text" value={p.college} onChange={e => setP({...p, college: e.target.value})} className="input-glass" />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">Branch</label>
+              <label className="profile-field-label">Branch</label>
               <select value={p.branch} onChange={e => setP({...p, branch: e.target.value})} className="input-glass">
                 <option value="B.Tech">B.Tech</option>
                 <option value="BCA">BCA</option>
@@ -106,7 +154,7 @@ const Profile = () => {
               </select>
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">Year</label>
+              <label className="profile-field-label">Year</label>
               <select value={p.year} onChange={e => setP({...p, year: parseInt(e.target.value)})} className="input-glass">
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
@@ -116,7 +164,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="mt-4">
-            <label className="text-sm text-gray-400 mb-1 block">Bio</label>
+            <label className="profile-field-label">Bio</label>
             <textarea value={p.bio} onChange={e => setP({...p, bio: e.target.value})} className="input-glass h-24 resize-none" maxLength={300} />
           </div>
         </div>

@@ -69,8 +69,8 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
-    // This generates a random cartoon avatar automatically!
+    default: "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+    maxlength: 500000
   },
 
   // Stats

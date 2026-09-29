@@ -31,7 +31,7 @@ router.get('/me', protect, async (req, res) => {
 // PUT /api/users/me
 router.put('/me', protect, async (req, res) => {
   try {
-    const { name, bio, branch, year, college, canTeach, wantToLearn } = req.body;
+    const { name, bio, branch, year, college, canTeach, wantToLearn, avatar } = req.body;
 
     if (!name?.trim()) {
       return res.status(400).json({ success: false, message: "Name is required" });
@@ -45,6 +45,14 @@ router.put('/me', protect, async (req, res) => {
       return res.status(400).json({ success: false, message: "Please select a valid year" });
     }
 
+    const nextAvatar = String(avatar || '').trim();
+    if (nextAvatar && !/^https?:\/\/|^data:image\/(png|jpe?g|webp|gif);base64,/i.test(nextAvatar)) {
+      return res.status(400).json({ success: false, message: "Please choose a valid image or avatar" });
+    }
+    if (nextAvatar.length > 500000) {
+      return res.status(400).json({ success: false, message: "Profile image is too large" });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.userId,
       {
@@ -54,7 +62,8 @@ router.put('/me', protect, async (req, res) => {
         year: Number(year),
         college: String(college || '').trim().slice(0, 120),
         canTeach: cleanSkills(canTeach),
-        wantToLearn: cleanSkills(wantToLearn)
+        wantToLearn: cleanSkills(wantToLearn),
+        ...(nextAvatar ? { avatar: nextAvatar } : {})
       },
       { new: true, runValidators: true }
       // new: true returns the UPDATED document, not the old one

@@ -14,7 +14,7 @@ const SwapRequest = require('./models/SwapRequest');
 // cors() allows your frontend (React) to talk to this backend
 app.use(cors());
 // express.json() converts incoming JSON data into JavaScript objects
-app.use(express.json());
+app.use(express.json({ limit: '500kb' }));
 
 // DATABASE CONNECTION
 // mongoose.connect() connects to your MongoDB Atlas cloud database
