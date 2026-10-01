@@ -148,7 +148,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="glass-card p-8 mb-6">
+        <div className="glass-card p-8 mb-6 profile-section-card">
           <h2 className="profile-section-title">The basics</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -166,26 +166,6 @@ const Profile = () => {
               <input type="text" value={p.college} onChange={e => setP({...p, college: e.target.value})} className="input-glass" />
             </div>
 
-            <div className="glass-card p-8 mb-6">
-              <div className="flex items-center justify-between gap-4"><div><h2 className="profile-section-title">Education timeline</h2><p className="text-sm opacity-70">Add current and past study so matches understand your context.</p></div><button type="button" onClick={addEducation} className="btn-glow px-4"><FaPlus /> Add</button></div>
-              <div className="space-y-4 mt-5">
-                {p.education.map((item, index) => <div className="education-row" key={`${index}-${item.qualification}`}>
-                  <select className="input-glass" value={item.qualification} onChange={e => updateEducation(index, 'qualification', e.target.value)}><option value="">Degree or diploma</option>{QUALIFICATIONS.map(option => <option key={option}>{option}</option>)}</select>
-                  <input className="input-glass" placeholder="Institution / university" value={item.institution} onChange={e => updateEducation(index, 'institution', e.target.value)} />
-                  <input className="input-glass" placeholder="Year or status (e.g. 2024–2028)" value={item.year} onChange={e => updateEducation(index, 'year', e.target.value)} />
-                  <button type="button" className="icon-button" onClick={() => removeEducation(index)} aria-label="Remove education"><FaTimes /></button>
-                </div>)}
-                {p.education.length === 0 && <div className="profile-inline-note">No education entries yet. Add one to make your profile more useful.</div>}
-              </div>
-            </div>
-
-            <div className="glass-card p-8 mb-6">
-              <h2 className="profile-section-title">Private ways to connect</h2>
-              <p className="text-sm opacity-70 mb-4">These stay hidden from Explore and unlock only for an accepted exchange partner.</p>
-              <div className="grid md:grid-cols-2 gap-4">
-                {['instagram', 'linkedin', 'github', 'website'].map(key => <div key={key}><label className="profile-field-label">{key[0].toUpperCase() + key.slice(1)}</label><input className="input-glass" placeholder={key === 'website' ? 'https://...' : '@handle or https://...'} value={p.socialLinks[key] || ''} onChange={e => setP(current => ({...current, socialLinks: {...current.socialLinks, [key]: e.target.value}}))} /></div>)}
-              </div>
-            </div>
             <div>
               <label className="profile-field-label">Branch</label>
               <select value={p.branch} onChange={e => setP({...p, branch: e.target.value})} className="input-glass">
@@ -205,6 +185,27 @@ const Profile = () => {
                 <option value={3}>3rd Year</option>
                 <option value={4}>4th Year</option>
               </select>
+            </div>
+          </div>
+
+          <div className="glass-card p-8 mb-6 profile-section-card">
+            <div className="profile-section-heading-row"><div><h2 className="profile-section-title">Education timeline</h2><p className="profile-section-help">Add current and past study so matches understand your context.</p></div><button type="button" onClick={addEducation} className="btn-glow profile-add-button"><FaPlus /> Add education</button></div>
+            <div className="space-y-4 mt-5">
+              {p.education.map((item, index) => <motion.div layout className="education-row" key={`${index}-${item.qualification}`}>
+                <select className="input-glass" value={item.qualification} onChange={e => updateEducation(index, 'qualification', e.target.value)}><option value="">Degree or diploma</option>{QUALIFICATIONS.map(option => <option key={option}>{option}</option>)}</select>
+                <input className="input-glass" placeholder="Institution / university" value={item.institution} onChange={e => updateEducation(index, 'institution', e.target.value)} />
+                <input className="input-glass" placeholder="Year or status (e.g. 2024–2028)" value={item.year} onChange={e => updateEducation(index, 'year', e.target.value)} />
+                <button type="button" className="icon-button" onClick={() => removeEducation(index)} aria-label="Remove education"><FaTimes /></button>
+              </motion.div>)}
+              {p.education.length === 0 && <div className="profile-inline-note">No education entries yet. Add one to make your profile more useful.</div>}
+            </div>
+          </div>
+
+          <div className="glass-card p-8 mb-6 profile-section-card">
+            <h2 className="profile-section-title">Private ways to connect</h2>
+            <p className="profile-section-help mb-4">These stay hidden from Explore and unlock only for an accepted exchange partner.</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {['instagram', 'linkedin', 'github', 'website'].map(key => <div key={key}><label className="profile-field-label">{key[0].toUpperCase() + key.slice(1)}</label><input className="input-glass" placeholder={key === 'website' ? 'https://...' : '@handle or https://...'} value={p.socialLinks[key] || ''} onChange={e => setP(current => ({...current, socialLinks: {...current.socialLinks, [key]: e.target.value}}))} /></div>)}
             </div>
           </div>
           <div className="mt-4">

@@ -24,6 +24,7 @@ const FAQS = [
   ['Do I need to be an expert?', 'No. You only need to be a little further along than the person you are helping. Peer learning works because the experience is fresh.'],
   ['How do I keep an exchange focused?', 'Each proposal has one skill to teach, one skill to learn, and a short note. Agree on the time and scope before you meet.'],
 ]
+const FEATURED_SKILLS = ['React', 'UI/UX Design', 'Photography', 'Spoken English', 'Excel', 'Python', 'Video Editing', 'Public Speaking']
 
 const avatarFor = (student) => student?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(student?.name || 'Student')}`
 
@@ -31,6 +32,7 @@ const Home = () => {
   const { user } = useAuth()
   const [students, setStudents] = useState([])
   const [query, setQuery] = useState('')
+  const [skillFocus, setSkillFocus] = useState('')
   const [openFaq, setOpenFaq] = useState(0)
   const [loading, setLoading] = useState(true)
   const [communityError, setCommunityError] = useState('')
@@ -60,7 +62,8 @@ const Home = () => {
     students.forEach((student) => [...(student.canTeach || []), ...(student.wantToLearn || [])].forEach((skill) => {
       counts.set(skill, (counts.get(skill) || 0) + 1)
     }))
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([skill]) => skill)
+    const liveSkills = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([skill]) => skill)
+    return [...new Set([...liveSkills, ...FEATURED_SKILLS])].slice(0, 8)
   }, [students])
 
   const visibleStudents = useMemo(() => {
@@ -96,9 +99,9 @@ const Home = () => {
               <div className="note-topline"><span>LIVE COMMUNITY</span><HiOutlineSparkles /></div>
               <div className="note-rule" />
               <p className="note-question">What are you<br /><strong>curious about?</strong></p>
-              <div className="note-search"><HiMagnifyingGlass /><span>{skills[0] || 'Search a skill'}</span><kbd>⌘ K</kbd></div>
+              <label className={`note-search ${skillFocus ? 'is-active' : ''}`}><HiMagnifyingGlass /><input value={skillFocus} onChange={event => { setSkillFocus(event.target.value); setQuery(event.target.value) }} onKeyDown={event => { if (event.key === 'Enter') document.querySelector('.home-live-section')?.scrollIntoView({ behavior: 'smooth' }) }} placeholder={skills[0] || 'Search a skill'} aria-label="Search for a skill" /><kbd>↵</kbd></label>
               <div className="note-cloud">
-                {(skills.length ? skills : ['React', 'Photography', 'Excel', 'Spoken English']).slice(0, 4).map((skill, index) => <span key={skill} className={`note-pill note-pill-${index}`}>{skill}</span>)}
+                {(skills.length ? skills : FEATURED_SKILLS).slice(0, 4).map((skill, index) => <button type="button" key={skill} className={`note-pill note-pill-${index} ${skillFocus === skill ? 'is-selected' : ''}`} onClick={() => { setSkillFocus(skill); setQuery(skill); document.querySelector('.home-live-section')?.scrollIntoView({ behavior: 'smooth' }) }}>{skill}</button>)}
               </div>
               <div className="note-footer"><span className="avatar-stack"><i /><i /><i /></span><span>{loading ? 'Finding your campus…' : `${students.length || 'New'} students in the exchange`}</span></div>
             </div>
@@ -116,7 +119,7 @@ const Home = () => {
           </div>
           <div className="live-board">
             <div className="live-board-header"><div><span className="live-dot" /> Live student directory</div><Link to="/explore">Open full directory <HiArrowUpRight /></Link></div>
-            <label className="live-search"><HiMagnifyingGlass /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a name, programme, or skill" aria-label="Search the student community" /></label>
+            <label className="live-search"><HiMagnifyingGlass /><input value={query} onChange={(event) => { setQuery(event.target.value); setSkillFocus(event.target.value) }} placeholder="Search a name, programme, or skill" aria-label="Search the student community" />{query && <button type="button" className="live-search-clear" onClick={() => { setQuery(''); setSkillFocus('') }}>Clear</button>}</label>
             <div className="live-students">
               {communityError ? <div className="live-empty live-empty-error"><HiOutlineArrowPath /><span>{communityError}</span><button type="button" onClick={loadCommunity}>Retry</button></div> : visibleStudents.length ? visibleStudents.map((student) => (
                 <Link to="/explore" className="live-student" key={student._id}>
