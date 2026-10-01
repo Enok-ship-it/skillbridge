@@ -74,17 +74,26 @@ const SwapRequests = () => {
 }
 
 const SwapCard = ({ swap, identity, busy, onUpdate }) => {
+  const { token } = useAuth()
+  const [contact, setContact] = useState(null)
   const isSender = String(swap.sender?._id || swap.sender) === identity
   const peer = isSender ? swap.receiver : swap.sender
   const canRespond = !isSender && swap.status === 'pending'
   const canComplete = swap.status === 'accepted'
   const date = swap.createdAt ? new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(swap.createdAt)) : 'Recently'
+  const revealContact = async () => {
+    try {
+      const response = await axios.get(`/api/swaps/${swap._id}/contact`, { headers: { Authorization: `Bearer ${token}` } })
+      setContact(response.data.contact)
+    } catch (error) { toast.error(error.response?.data?.message || 'Contact details are not available yet.') }
+  }
   return (
     <article className="swap-card">
       <div className="swap-card-profile"><img className="member-avatar member-avatar-large" src={avatarFor(peer)} alt={`${peer?.name || 'Student'}'s avatar`} /><div><div className="swap-card-name"><h2>{peer?.name || 'Student'}</h2><span className={`status-pill status-${swap.status}`}>{swap.status}</span></div><p>{isSender ? 'You proposed this exchange' : 'Sent you an exchange proposal'} · {date}</p></div></div>
       <div className="exchange-summary"><div><span>{isSender ? 'You will teach' : `${peer?.name?.split(' ')[0] || 'They'} will teach`}</span><strong>{swap.senderTeaches}</strong></div><span className="exchange-symbol">↔</span><div><span>{isSender ? `${peer?.name?.split(' ')[0] || 'They'} will teach` : 'You will teach'}</span><strong>{swap.receiverTeaches}</strong></div></div>
       {swap.message && <blockquote>“{swap.message}”</blockquote>}
-      <div className="swap-card-footer"><span>{swap.status === 'pending' ? <><HiClock /> Waiting for a response</> : swap.status === 'accepted' ? <><HiCheck /> Exchange accepted — agree on the details.</> : swap.status === 'completed' ? <><HiCheck /> Completed exchange</> : <><HiXMark /> Request closed</>}</span>{canRespond && <div><button className="button button-secondary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'rejected')}>Decline</button><button className="button button-primary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'accepted')}>{busy ? 'Saving…' : 'Accept request'}</button></div>}{canComplete && <button className="button button-primary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'completed')}>{busy ? 'Saving…' : 'Mark completed'}</button>}</div>
+      {contact && <div className="shared-contact"><strong>Shared details</strong><span>{contact.college || 'Institution not added'} · {contact.branch || 'Course not added'}</span>{Object.entries(contact.socialLinks || {}).filter(([, value]) => value).map(([key, value]) => <a key={key} href={value.startsWith('@') ? `https://instagram.com/${value.slice(1)}` : value} target="_blank" rel="noreferrer">{key}</a>)}</div>}
+      <div className="swap-card-footer"><span>{swap.status === 'pending' ? <><HiClock /> Waiting for a response</> : swap.status === 'accepted' ? <><HiCheck /> Exchange accepted — agree on the details.</> : swap.status === 'completed' ? <><HiCheck /> Completed exchange</> : <><HiXMark /> Request closed</>}</span><div>{swap.status === 'accepted' && <><button className="button button-secondary button-small" onClick={revealContact}>Reveal shared details</button><Link className="button button-secondary button-small" to={`/chat/${swap._id}`}>Open private chat</Link></>}{canRespond && <><button className="button button-secondary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'rejected')}>Decline</button><button className="button button-primary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'accepted')}>{busy ? 'Saving…' : 'Accept request'}</button></>}{canComplete && <button className="button button-primary button-small" disabled={busy} onClick={() => onUpdate(swap._id, 'completed')}>{busy ? 'Saving…' : 'Mark completed'}</button>}</div></div>
     </article>
   )
 }

@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Explore from './pages/Explore'
 import Profile from './pages/Profile'
 import SwapRequests from './pages/SwapRequests'
+import Chat from './pages/Chat'
 import { Terms, Privacy, CommunityGuidelines } from './pages/Legal'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -61,6 +62,7 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><PageWrap><Dashboard /></PageWrap></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><PageWrap><Profile /></PageWrap></ProtectedRoute>} />
               <Route path="/swaps" element={<ProtectedRoute><PageWrap><SwapRequests /></PageWrap></ProtectedRoute>} />
+              <Route path="/chat/:swapId" element={<ProtectedRoute><PageWrap><Chat /></PageWrap></ProtectedRoute>} />
               <Route path="/terms" element={<PageWrap><Terms /></PageWrap>} />
               <Route path="/privacy" element={<PageWrap><Privacy /></PageWrap>} />
               <Route path="/community-guidelines" element={<PageWrap><CommunityGuidelines /></PageWrap>} />

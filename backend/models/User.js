@@ -72,6 +72,25 @@ const userSchema = new mongoose.Schema({
     default: "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
     maxlength: 500000
   },
+  gender: {
+    type: String,
+    enum: ['female', 'male', 'non-binary', 'prefer-not-to-say'],
+    default: 'prefer-not-to-say'
+  },
+  education: {
+    type: [{
+      qualification: { type: String, trim: true, maxlength: 80 },
+      institution: { type: String, trim: true, maxlength: 120 },
+      year: { type: String, trim: true, maxlength: 30 }
+    }],
+    default: []
+  },
+  socialLinks: {
+    instagram: { type: String, trim: true, maxlength: 180 },
+    linkedin: { type: String, trim: true, maxlength: 180 },
+    github: { type: String, trim: true, maxlength: 180 },
+    website: { type: String, trim: true, maxlength: 180 }
+  },
 
   // Stats
   rating: {

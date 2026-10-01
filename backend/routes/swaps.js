@@ -126,6 +126,7 @@ router.put('/:id', protect, async (req, res) => {
         success: false,
         message: "Swap request not found"
       });
+
     }
 
     const isSender = swap.sender.toString() === req.userId;
@@ -140,6 +141,22 @@ router.put('/:id', protect, async (req, res) => {
       return res.status(403).json({
         success: false,
         message: "Only the receiver can respond to a pending request"
+      });
+
+      // Contact details are private until both people are in an accepted exchange.
+      router.get('/:id/contact', protect, async (req, res) => {
+        try {
+          const swap = await SwapRequest.findById(req.params.id);
+          if (!swap || swap.status !== 'accepted') return res.status(403).json({ success: false, message: 'Contact details unlock after acceptance.' });
+          const isParticipant = [String(swap.sender), String(swap.receiver)].includes(String(req.userId));
+          if (!isParticipant) return res.status(403).json({ success: false, message: 'You are not part of this exchange.' });
+          const peerId = String(swap.sender) === String(req.userId) ? swap.receiver : swap.sender;
+          const peer = await User.findById(peerId).select('name avatar college branch year education socialLinks');
+          if (!peer) return res.status(404).json({ success: false, message: 'Student not found.' });
+          res.json({ success: true, contact: peer });
+        } catch {
+          res.status(500).json({ success: false, message: 'Server error' });
+        }
       });
     }
 

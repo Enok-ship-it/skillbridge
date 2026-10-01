@@ -10,21 +10,28 @@ const SKILLS = [
   "SQL","MongoDB","Data Structures","Algorithms","Machine Learning","Data Science",
   "Android Dev","Flutter","Photoshop","Figma","UI/UX Design","Video Editing",
   "Guitar","Piano","Singing","Spoken English","French","Digital Marketing","SEO",
-  "Content Writing","Excel","PowerPoint","Tally","AutoCAD"
+  "Content Writing","Excel","PowerPoint","Tally","AutoCAD","Public Speaking","Interview Prep",
+  "Git & GitHub","TypeScript","Next.js","Express","REST APIs","Cybersecurity","Cloud Computing",
+  "Canva","Illustration","3D Modelling","Photography","Cooking","Fitness","Chess","Hindi",
+  "Spanish","Japanese","Resume Review","Research","Project Management","Financial Literacy"
 ]
 
 const AVATARS = [
-  { label: 'Sky', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Sky' },
-  { label: 'Mango', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Mango' },
-  { label: 'River', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=River' },
-  { label: 'Nova', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Nova' },
-  { label: 'Pixel', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Pixel' },
-  { label: 'Orbit', url: 'https://api.dicebear.com/9.x/notionists/svg?seed=Orbit' }
+  ...['Sky', 'Mango', 'River', 'Nova', 'Pixel', 'Orbit', 'Sage', 'Ember', 'Cedar', 'Lumen'].map(label => ({
+    label, url: `https://api.dicebear.com/9.x/notionists/svg?seed=${label}`
+  }))
+]
+
+const QUALIFICATIONS = [
+  'B.Tech / BE', 'BCA', 'BSc', 'BBA', 'BA', 'B.Com', 'MBBS', 'B.Arch',
+  'M.Tech / ME', 'MCA', 'MSc', 'MBA', 'MA', 'M.Com', 'PhD',
+  'Diploma in Engineering', 'Polytechnic Diploma', 'PG Diploma', 'ITI / Trade Certificate',
+  'Certificate Course', 'Bootcamp', 'Other'
 ]
 
 const Profile = () => {
   const { token, fetchUser } = useAuth()
-  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', avatar: '', canTeach: [], wantToLearn: [] })
+  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', avatar: '', gender: 'prefer-not-to-say', education: [], socialLinks: {}, canTeach: [], wantToLearn: [] })
   const [newTeach, setNewTeach] = useState('')
   const [newLearn, setNewLearn] = useState('')
   const [saving, setSaving] = useState(false)
@@ -42,6 +49,9 @@ const Profile = () => {
           year: u.year || 4,
           college: u.college || '',
           avatar: u.avatar || AVATARS[0].url,
+          gender: u.gender || 'prefer-not-to-say',
+          education: u.education || [],
+          socialLinks: u.socialLinks || {},
           canTeach: u.canTeach || [],
           wantToLearn: u.wantToLearn || []
         })
@@ -66,6 +76,13 @@ const Profile = () => {
   const removeSkill = (type, skill) => {
     setP({ ...p, [type]: p[type].filter(s => s !== skill) })
   }
+
+  const updateEducation = (index, key, value) => setP(current => ({
+    ...current,
+    education: current.education.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item)
+  }))
+  const addEducation = () => setP(current => ({ ...current, education: [...current.education, { qualification: '', institution: '', year: '' }] }))
+  const removeEducation = (index) => setP(current => ({ ...current, education: current.education.filter((_, itemIndex) => itemIndex !== index) }))
 
   const save = async () => {
     setSaving(true)
@@ -139,8 +156,35 @@ const Profile = () => {
               <input type="text" value={p.name} onChange={e => setP({...p, name: e.target.value})} className="input-glass" />
             </div>
             <div>
+              <label className="profile-field-label">How should your avatar feel?</label>
+              <select value={p.gender} onChange={e => setP({...p, gender: e.target.value})} className="input-glass">
+                <option value="prefer-not-to-say">Keep it open</option><option value="female">Feminine</option><option value="male">Masculine</option><option value="non-binary">Androgynous</option>
+              </select>
+            </div>
+            <div>
               <label className="profile-field-label">College</label>
               <input type="text" value={p.college} onChange={e => setP({...p, college: e.target.value})} className="input-glass" />
+            </div>
+
+            <div className="glass-card p-8 mb-6">
+              <div className="flex items-center justify-between gap-4"><div><h2 className="profile-section-title">Education timeline</h2><p className="text-sm opacity-70">Add current and past study so matches understand your context.</p></div><button type="button" onClick={addEducation} className="btn-glow px-4"><FaPlus /> Add</button></div>
+              <div className="space-y-4 mt-5">
+                {p.education.map((item, index) => <div className="education-row" key={`${index}-${item.qualification}`}>
+                  <select className="input-glass" value={item.qualification} onChange={e => updateEducation(index, 'qualification', e.target.value)}><option value="">Degree or diploma</option>{QUALIFICATIONS.map(option => <option key={option}>{option}</option>)}</select>
+                  <input className="input-glass" placeholder="Institution / university" value={item.institution} onChange={e => updateEducation(index, 'institution', e.target.value)} />
+                  <input className="input-glass" placeholder="Year or status (e.g. 2024–2028)" value={item.year} onChange={e => updateEducation(index, 'year', e.target.value)} />
+                  <button type="button" className="icon-button" onClick={() => removeEducation(index)} aria-label="Remove education"><FaTimes /></button>
+                </div>)}
+                {p.education.length === 0 && <div className="profile-inline-note">No education entries yet. Add one to make your profile more useful.</div>}
+              </div>
+            </div>
+
+            <div className="glass-card p-8 mb-6">
+              <h2 className="profile-section-title">Private ways to connect</h2>
+              <p className="text-sm opacity-70 mb-4">These stay hidden from Explore and unlock only for an accepted exchange partner.</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                {['instagram', 'linkedin', 'github', 'website'].map(key => <div key={key}><label className="profile-field-label">{key[0].toUpperCase() + key.slice(1)}</label><input className="input-glass" placeholder={key === 'website' ? 'https://...' : '@handle or https://...'} value={p.socialLinks[key] || ''} onChange={e => setP(current => ({...current, socialLinks: {...current.socialLinks, [key]: e.target.value}}))} /></div>)}
+              </div>
             </div>
             <div>
               <label className="profile-field-label">Branch</label>

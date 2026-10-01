@@ -31,7 +31,7 @@ router.get('/me', protect, async (req, res) => {
 // PUT /api/users/me
 router.put('/me', protect, async (req, res) => {
   try {
-    const { name, bio, branch, year, college, canTeach, wantToLearn, avatar } = req.body;
+    const { name, bio, branch, year, college, canTeach, wantToLearn, avatar, gender, education, socialLinks } = req.body;
 
     if (!name?.trim()) {
       return res.status(400).json({ success: false, message: "Name is required" });
@@ -53,6 +53,22 @@ router.put('/me', protect, async (req, res) => {
       return res.status(400).json({ success: false, message: "Profile image is too large" });
     }
 
+    const cleanEducation = Array.isArray(education)
+      ? education.slice(0, 8).map((item) => ({
+        qualification: String(item?.qualification || '').trim().slice(0, 80),
+        institution: String(item?.institution || '').trim().slice(0, 120),
+        year: String(item?.year || '').trim().slice(0, 30)
+      })).filter((item) => item.qualification || item.institution)
+      : [];
+    const cleanSocialLinks = {};
+    for (const key of ['instagram', 'linkedin', 'github', 'website']) {
+      const value = String(socialLinks?.[key] || '').trim().slice(0, 180);
+      if (value && !/^https?:\/\/|^@/i.test(value)) {
+        return res.status(400).json({ success: false, message: `Please enter a valid ${key} link` });
+      }
+      cleanSocialLinks[key] = value;
+    }
+
     const user = await User.findByIdAndUpdate(
       req.userId,
       {
@@ -63,6 +79,9 @@ router.put('/me', protect, async (req, res) => {
         college: String(college || '').trim().slice(0, 120),
         canTeach: cleanSkills(canTeach),
         wantToLearn: cleanSkills(wantToLearn),
+        gender: ['female', 'male', 'non-binary', 'prefer-not-to-say'].includes(gender) ? gender : 'prefer-not-to-say',
+        education: cleanEducation,
+        socialLinks: cleanSocialLinks,
         ...(nextAvatar ? { avatar: nextAvatar } : {})
       },
       { new: true, runValidators: true }
@@ -113,7 +132,7 @@ router.get('/explore', async (req, res) => {
     }
 
     const users = await User.find(query)
-      .select('-password')
+      .select('-password -socialLinks')
       .sort({ rating: -1, totalSwaps: -1 })
       // Sort by highest rating first, then most swaps
       .limit(50);
@@ -141,7 +160,7 @@ router.get('/matches', protect, async (req, res) => {
       _id: { $ne: me._id },  // Exclude myself
       canTeach: { $in: me.wantToLearn }
       // $in checks if ANY element in canTeach matches ANY in wantToLearn
-    }).select('-password');
+    }).select('-password -socialLinks');
 
     // Now filter for MUTUAL matches (they also want what I teach)
     const mutualMatches = potentialMatches.filter(user =>
@@ -170,7 +189,7 @@ router.get('/matches', protect, async (req, res) => {
 // Keep this dynamic route after named routes such as /matches and /explore.
 router.get('/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await User.findById(req.params.id).select('-password -socialLinks');
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }

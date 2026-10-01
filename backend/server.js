@@ -29,6 +29,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/user'));
 // /api/swaps handles skill exchange requests
 app.use('/api/swaps', require('./routes/swaps'));
+app.use('/api/messages', require('./routes/messages'));
 app.get('/api/stats', async (req, res) => {
   try {
     const [students, skillGroups, exchanges, completedExchanges] = await Promise.all([
