@@ -1371,3 +1371,25 @@ body, .bg-animated { background: var(--page); color: var(--ink-light); }
 @media (prefers-color-scheme: dark) {
   .gradient-cyan { color: #65d8e4 !important; }
 }
+
+/* Dashboard usability pass: keep the hierarchy quiet, readable, and consistent. */
+.dashboard-page .eyebrow { font-size: .75rem; letter-spacing: .1em; text-transform: none; }
+.dashboard-page .stat-card span,
+.dashboard-page .activity-item > div > span { font-size: .75rem; }
+.dashboard-page .panel-heading { justify-content: flex-start; }
+.dashboard-page .panel-heading > .text-link { margin-top: 25px; }
+.dashboard-page .panel-heading.compact > .text-link { margin-top: 0; }
+.dashboard-page .status-pill { gap: 6px; padding: 0; border: 0; border-radius: 0; background: transparent; font-size: .75rem; font-weight: 700; }
+.dashboard-page .status-pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.dashboard-page .status-pending { color: #a66a00; }
+.dashboard-page .status-accepted { color: #147c88; }
+.dashboard-page .status-completed { color: #287f67; }
+.dashboard-page .status-rejected { color: #b94b40; }
+.dashboard-page .progress-ring { width: 48px; height: 48px; }
+.dashboard-page .progress-ring::before { width: 39px; height: 39px; background: var(--surface-light-2); }
+.dashboard-page .progress-ring span { font-size: .68rem; }
+.dashboard-page .readiness-topline { align-items: flex-start; }
+.dashboard-page .readiness-card h2 { font-size: 1.08rem; }
+.dashboard-page .empty-state .button-primary { box-shadow: none; }
+.site-footer h2 { margin: 0 0 12px; color: var(--ink-light); font-size: .85rem; font-weight: 760; }
+.footer-bottom { font-size: .75rem; }

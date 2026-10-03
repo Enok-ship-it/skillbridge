@@ -67,7 +67,7 @@ const Dashboard = () => {
     <section className="product-page dashboard-page container-x">
       <header className="product-hero dashboard-hero">
         <div>
-          <span className="eyebrow"><span className="live-dot" />YOUR LEARNING SPACE</span>
+          <span className="eyebrow"><span className="live-dot" />Your learning space</span>
           <h1>Good to see you, <span>{firstName}</span>.</h1>
           <p>Keep your exchanges moving and turn your next learning goal into a real conversation.</p>
         </div>
@@ -92,15 +92,15 @@ const Dashboard = () => {
         <div className="dashboard-main-column">
           <section className="panel panel-large" aria-labelledby="matches-heading">
             <div className="panel-heading">
-              <div><span className="eyebrow">CURATED FOR YOU</span><h2 id="matches-heading">Recommended partners</h2><p>Students who can help you learn what is next.</p></div>
+              <div><span className="eyebrow">Curated for you</span><h2 id="matches-heading">Recommended partners</h2><p>Students who can help you learn what is next.</p></div>
               <Link className="text-link" to="/explore">Explore all <HiArrowRight /></Link>
             </div>
             {loading ? <MatchSkeleton /> : matches.length === 0 ? (
               <div className="empty-state empty-state-inline">
                 <div className="empty-icon"><HiOutlineMagnifyingGlass /></div>
-                <h3>Your best matches start with your profile.</h3>
-                <p>Add both teaching and learning skills and we will surface relevant peers automatically.</p>
-                <Link to="/profile" className="button button-primary">Complete profile <HiArrowRight /></Link>
+                <h3>{profileProgress === 100 ? 'Your next match is still taking shape.' : 'Your best matches start with your profile.'}</h3>
+                <p>{profileProgress === 100 ? 'There are no close matches yet. Try widening your skills or browse the full student directory.' : 'Add both teaching and learning skills and we will surface relevant peers automatically.'}</p>
+                <Link to={profileProgress === 100 ? '/explore' : '/profile'} className="button button-primary">{profileProgress === 100 ? 'Browse the directory' : 'Complete profile'} <HiArrowRight /></Link>
               </div>
             ) : (
               <div className="match-list">
@@ -128,7 +128,7 @@ const Dashboard = () => {
           </section>
 
           <section className="panel" aria-labelledby="activity-heading">
-            <div className="panel-heading compact"><div><span className="eyebrow">EXCHANGE HISTORY</span><h2 id="activity-heading">Recent activity</h2></div><Link className="text-link" to="/swaps">View requests <HiArrowRight /></Link></div>
+            <div className="panel-heading compact"><div><span className="eyebrow">Exchange history</span><h2 id="activity-heading">Recent activity</h2></div><Link className="text-link" to="/swaps">View requests <HiArrowRight /></Link></div>
             {loading ? <ActivitySkeleton /> : swaps.length === 0 ? (
               <div className="activity-empty"><HiOutlineClipboardDocumentCheck /><span>Your exchange timeline will appear here.</span></div>
             ) : (
@@ -136,7 +136,7 @@ const Dashboard = () => {
                 {swaps.slice(0, 4).map((swap) => {
                   const isSender = String(swap.sender?._id || swap.sender) === String(identity)
                   const peer = isSender ? swap.receiver : swap.sender
-                  return <div className="activity-item" key={swap._id}><img className="activity-avatar" src={avatarFor(peer)} alt="" /><div><p><strong>{peer?.name || 'A student'}</strong> {isSender ? 'received your request' : 'sent you a request'}.</p><span>{swap.senderTeaches} ↔ {swap.receiverTeaches}</span></div><span className={`status-pill status-${swap.status}`}>{swap.status}</span></div>
+                  return <div className="activity-item" key={swap._id}><img className="activity-avatar" src={avatarFor(peer)} alt="" /><div><p><strong>{peer?.name || 'A student'}</strong> {isSender ? 'received your request' : 'sent you a request'}.</p><span>{swap.senderTeaches} ↔ {swap.receiverTeaches}</span></div><span className={`status-pill status-${swap.status}`}><i aria-hidden="true" />{swap.status}</span></div>
                 })}
               </div>
             )}
@@ -145,14 +145,14 @@ const Dashboard = () => {
 
         <aside className="dashboard-side-column">
           <section className="panel readiness-card" aria-labelledby="readiness-heading">
-            <div className="readiness-topline"><div><span className="eyebrow">PROFILE READINESS</span><h2 id="readiness-heading">{profileProgress}% complete</h2></div><div className="progress-ring" style={{ '--progress': `${profileProgress * 3.6}deg` }}><span>{profileProgress}%</span></div></div>
+            <div className="readiness-topline"><div><span className="eyebrow">Profile readiness</span><h2 id="readiness-heading">{profileProgress}% complete</h2></div><div className="progress-ring" style={{ '--progress': `${profileProgress * 3.6}deg` }}><span>{profileProgress}%</span></div></div>
             <div className="progress-track"><span style={{ width: `${profileProgress}%` }} /></div>
             <div className="readiness-list">
               {profileSteps.map((step) => <div className="readiness-step" key={step.label}><span className={step.complete ? 'step-check complete' : 'step-check'}>{step.complete ? <HiCheckCircle /> : <span />}</span><div><strong>{step.label}</strong><p>{step.complete ? 'Ready' : step.note}</p></div></div>)}
             </div>
             {profileProgress < 100 && <Link to="/profile" className="button button-secondary readiness-button">Finish your profile <HiArrowRight /></Link>}
           </section>
-          <section className="practice-card"><HiOutlineAcademicCap aria-hidden="true" /><span className="eyebrow">GOOD PRACTICE</span><h2>Agree on a clear session goal.</h2><p>Before accepting, decide what you will teach, what you expect to learn, and how long the session will take.</p><Link to="/community-guidelines">Read the guidelines <HiArrowRight /></Link></section>
+          <section className="practice-card"><HiOutlineAcademicCap aria-hidden="true" /><span className="eyebrow">Good practice</span><h2>Agree on a clear session goal.</h2><p>Before accepting, decide what you will teach, what you expect to learn, and how long the session will take.</p><Link to="/community-guidelines">Read the guidelines <HiArrowRight /></Link></section>
         </aside>
       </div>
     </section>

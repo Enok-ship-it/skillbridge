@@ -19,7 +19,7 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4>Platform</h4>
+          <h2>Platform</h2>
           <ul>
             <li><Link to="/">Home</Link></li>
             <li><Link to="/explore">Find learners</Link></li>
@@ -29,7 +29,7 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4>Trust & policies</h4>
+          <h2>Trust &amp; policies</h2>
           <ul>
             <li><Link to="/community-guidelines">Community guidelines</Link></li>
             <li><Link to="/privacy">Privacy notice</Link></li>
