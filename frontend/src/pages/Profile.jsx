@@ -22,6 +22,17 @@ const AVATARS = [
   }))
 ]
 
+const STREAM_DEGREE_MAP = {
+  Arts: ['BA', 'BJMC', 'BFA', 'Bachelor of Social Work (BSW)', 'MA', 'Other'],
+  Commerce: ['B.Com', 'BBA', 'BBM', 'M.Com', 'MBA', 'Other'],
+  Medical: ['MBBS', 'BDS', 'BAMS', 'BHMS', 'BPT', 'Nursing', 'PharmD / B.Pharm', 'Other'],
+  'Non-Medical': ['B.Tech / BE', 'BCA', 'BSc', 'B.Arch', 'Diploma in Engineering', 'Polytechnic Diploma', 'M.Tech / ME', 'MCA', 'MSc', 'Other'],
+  Other: ['Certificate Course', 'Bootcamp', 'ITI / Trade Certificate', 'PG Diploma', 'Other']
+}
+
+const DEFAULT_STREAM = 'Non-Medical'
+const STREAMS = Object.keys(STREAM_DEGREE_MAP)
+
 const QUALIFICATIONS = [
   'B.Tech / BE', 'BCA', 'BSc', 'BBA', 'BA', 'B.Com', 'MBBS', 'B.Arch',
   'M.Tech / ME', 'MCA', 'MSc', 'MBA', 'MA', 'M.Com', 'PhD',
@@ -29,9 +40,34 @@ const QUALIFICATIONS = [
   'Certificate Course', 'Bootcamp', 'Other'
 ]
 
+const normalizeBranch = (value) => {
+  const clean = String(value || '').trim()
+  if (!clean) return ''
+  if (clean.toLowerCase() === 'btech') return 'B.Tech / BE'
+  return clean
+}
+
+const detectStreamForBranch = (branch) => {
+  const normalized = normalizeBranch(branch)
+  return STREAMS.find((stream) => STREAM_DEGREE_MAP[stream].includes(normalized)) || DEFAULT_STREAM
+}
+
 const Profile = () => {
   const { token, fetchUser } = useAuth()
-  const [p, setP] = useState({ name: '', bio: '', branch: 'B.Tech', year: 4, college: '', avatar: '', gender: 'prefer-not-to-say', education: [], socialLinks: {}, canTeach: [], wantToLearn: [] })
+  const [p, setP] = useState({
+    name: '',
+    bio: '',
+    stream: DEFAULT_STREAM,
+    branch: 'B.Tech / BE',
+    year: 4,
+    college: '',
+    avatar: '',
+    gender: 'prefer-not-to-say',
+    education: [],
+    socialLinks: {},
+    canTeach: [],
+    wantToLearn: []
+  })
   const [newTeach, setNewTeach] = useState('')
   const [newLearn, setNewLearn] = useState('')
   const [saving, setSaving] = useState(false)
@@ -42,10 +78,15 @@ const Profile = () => {
       try {
         const res = await axios.get('/api/users/me', { headers: { Authorization: `Bearer ${token}` } })
         const u = res.data.user
+        const normalizedBranch = normalizeBranch(u.branch)
+        const detectedStream = detectStreamForBranch(normalizedBranch)
+        const streamDegrees = STREAM_DEGREE_MAP[detectedStream]
+        const nextBranch = streamDegrees.includes(normalizedBranch) ? normalizedBranch : streamDegrees[0]
         setP({
           name: u.name || '',
           bio: u.bio || '',
-          branch: u.branch || 'B.Tech',
+          stream: detectedStream,
+          branch: nextBranch,
           year: u.year || 4,
           college: u.college || '',
           avatar: u.avatar || AVATARS[0].url,
@@ -83,6 +124,12 @@ const Profile = () => {
   }))
   const addEducation = () => setP(current => ({ ...current, education: [...current.education, { qualification: '', institution: '', year: '' }] }))
   const removeEducation = (index) => setP(current => ({ ...current, education: current.education.filter((_, itemIndex) => itemIndex !== index) }))
+  const streamOptions = STREAM_DEGREE_MAP[p.stream] || STREAM_DEGREE_MAP[DEFAULT_STREAM]
+  const updateStream = (stream) => setP(current => ({
+    ...current,
+    stream,
+    branch: (STREAM_DEGREE_MAP[stream] || [current.branch])[0]
+  }))
 
   const save = async () => {
     setSaving(true)
@@ -148,7 +195,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="glass-card p-8 mb-6 profile-section-card">
+        <div className="glass-card p-6 mb-6 profile-section-card">
           <h2 className="profile-section-title">The basics</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -167,14 +214,15 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="profile-field-label">Branch</label>
+              <label className="profile-field-label">Stream / field</label>
+              <select value={p.stream} onChange={e => updateStream(e.target.value)} className="input-glass">
+                {STREAMS.map(stream => <option key={stream} value={stream}>{stream}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="profile-field-label">Degree / diploma</label>
               <select value={p.branch} onChange={e => setP({...p, branch: e.target.value})} className="input-glass">
-                <option value="B.Tech">B.Tech</option>
-                <option value="BCA">BCA</option>
-                <option value="BBA">BBA</option>
-                <option value="BSc">BSc</option>
-                <option value="BTech">BTech</option>
-                <option value="MCA">MCA</option>
+                {streamOptions.map(option => <option key={option} value={option}>{option}</option>)}
               </select>
             </div>
             <div>
@@ -187,8 +235,9 @@ const Profile = () => {
               </select>
             </div>
           </div>
+        </div>
 
-          <div className="glass-card p-8 mb-6 profile-section-card">
+          <div className="glass-card p-6 mb-6 profile-section-card">
             <div className="profile-section-heading-row"><div><h2 className="profile-section-title">Education timeline</h2><p className="profile-section-help">Add current and past study so matches understand your context.</p></div><button type="button" onClick={addEducation} className="btn-glow profile-add-button"><FaPlus /> Add education</button></div>
             <div className="space-y-4 mt-5">
               {p.education.map((item, index) => <motion.div layout className="education-row" key={`${index}-${item.qualification}`}>
@@ -201,18 +250,18 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="glass-card p-8 mb-6 profile-section-card">
+          <div className="glass-card p-6 mb-6 profile-section-card">
             <h2 className="profile-section-title">Private ways to connect</h2>
             <p className="profile-section-help mb-4">These stay hidden from Explore and unlock only for an accepted exchange partner.</p>
-            <div className="grid md:grid-cols-2 gap-4">
-              {['instagram', 'linkedin', 'github', 'website'].map(key => <div key={key}><label className="profile-field-label">{key[0].toUpperCase() + key.slice(1)}</label><input className="input-glass" placeholder={key === 'website' ? 'https://...' : '@handle or https://...'} value={p.socialLinks[key] || ''} onChange={e => setP(current => ({...current, socialLinks: {...current.socialLinks, [key]: e.target.value}}))} /></div>)}
+            <div className="grid md:grid-cols-2 gap-x-4 gap-y-5">
+              {['instagram', 'linkedin', 'github', 'website'].map(key => <div key={key} className="space-y-2"><label className="profile-field-label">{key[0].toUpperCase() + key.slice(1)}</label><input className="input-glass" placeholder={key === 'website' ? 'https://...' : '@handle or https://...'} value={p.socialLinks[key] || ''} onChange={e => setP(current => ({...current, socialLinks: {...current.socialLinks, [key]: e.target.value}}))} /></div>)}
             </div>
           </div>
-          <div className="mt-4">
+          <div className="glass-card p-6 mb-6 profile-section-card">
+            <h2 className="profile-section-title">Bio</h2>
             <label className="profile-field-label">Bio</label>
             <textarea value={p.bio} onChange={e => setP({...p, bio: e.target.value})} className="input-glass h-24 resize-none" maxLength={300} />
           </div>
-        </div>
 
         <div className="glass-card p-8 mb-6">
           <h2 className="profile-section-title"><span className="profile-section-icon profile-section-icon-teach">↗</span> Skills I can teach</h2>
